@@ -60,7 +60,7 @@
     .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
     .btn-muted { background: #eff5fb; color: var(--primary); border-color: #dce9f8; }
     .layout { display:grid; gap:16px; }
-    .top-row { display:grid; grid-template-columns: 380px minmax(0,1fr); gap:16px; align-items:start; }
+    .top-row { display:grid; grid-template-columns: minmax(320px, 360px) minmax(0,1fr); gap:16px; align-items:start; }
     .left-col, .right-col { display: grid; gap: 16px; align-items:start; }
     .card { padding: 16px; }
     .card h2, .card h3 { margin: 0 0 12px; color: var(--primary); }
@@ -107,8 +107,10 @@
     .number-input { width: 90px; }
     .separator { height:1px; background:#e6eef7; margin:4px 0; }
     @media (max-width: 1120px) {
-      .top-row { grid-template-columns: 1fr; }
       .top-fields { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 900px) and (orientation: portrait) {
+      .top-row { grid-template-columns: 1fr; }
     }
     @media (max-width: 860px) {
       .header-grid { grid-template-columns: 74px minmax(0,1fr); }
@@ -116,9 +118,18 @@
       .top-fields { grid-template-columns: 1fr; }
       .top-actions { flex-wrap: wrap; }
     }
-    @media (max-width: 780px) {
+    @media (max-width: 780px) and (orientation: portrait) {
       body { padding: 10px; }
       .meta-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 980px) and (orientation: landscape) {
+      body { padding: 10px; }
+      .app { gap: 12px; }
+      .top-row { grid-template-columns: minmax(280px, 330px) minmax(0,1fr); gap: 12px; }
+      .tools-card, .terrain-card, .card { padding: 12px; }
+      .tool-group { gap: 8px; margin-bottom: 12px; }
+      .shot-buttons, .zone-buttons, .player-buttons { gap: 6px; }
+      .terrain-shell { padding: 4px 6px 2px; }
     }
   </style>
 </head>
