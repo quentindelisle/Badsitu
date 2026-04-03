@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d47a1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>PWA EPS - Situations Badminton</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --panel: #ffffff;
+      --ink: #123;
+      --muted: #5b6878;
+      --primary: #0d47a1;
+      --primary-2: #1565c0;
+      --accent: #ff8f00;
+      --success: #2e7d32;
+      --danger: #c62828;
+      --gold: #c99700;
+      --court: #1565c0;
+      --line: #ffffff;
+      --shadow: 0 10px 24px rgba(10, 35, 66, 0.12);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: Inter, Arial, sans-serif; color: var(--ink); background: linear-gradient(180deg, #f6f9fc, #edf4fb); }
+    body { padding: 16px; }
+    .app { max-width: 1440px; margin: 0 auto; display: grid; gap: 16px; }
+    .panel { background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .header { padding: 12px 14px; }
+    .header-grid { display:grid; grid-template-columns: 92px minmax(0,1fr); gap: 12px; align-items: stretch; }
+    .icon-slot { min-height: 92px; border: 1px solid #dbe7f4; border-radius: 20px; display:flex; align-items:center; justify-content:center; overflow:hidden; background: linear-gradient(180deg,#f8fbff,#edf4fb); padding:0; }
+    .icon-slot img { width:100%; height:100%; object-fit:contain; display:block; }
+    .header-main { display:grid; gap:8px; align-content:center; }
+    .top-fields { display: grid; grid-template-columns: minmax(240px, 320px) minmax(220px, 1fr); gap: 8px; align-items: end; }
+    .top-actions { display:flex; flex-wrap:nowrap; gap:6px; align-items:end; overflow:auto; padding-bottom:2px; }
+    .field { display: grid; gap: 4px; }
+    .field label { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+    input, textarea, select, button {
+      font: inherit;
+      border-radius: 10px;
+      border: 1px solid #d6e0eb;
+      padding: 8px 10px;
+      background: #fff;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    .header input, .header button { min-height: 34px; }
+    .header button { padding: 6px 10px; font-size: 0.88rem; }
+    .header input { padding: 7px 10px; }
+    button { cursor: pointer; font-weight: 700; transition: transform 0.08s linear, box-shadow 0.08s linear, background 0.08s linear, outline-color 0.08s linear; }
+    button:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn-muted { background: #eff5fb; color: var(--primary); border-color: #dce9f8; }
+    .layout { display:grid; gap:16px; }
+    .top-row { display:grid; grid-template-columns: 380px minmax(0,1fr); gap:16px; align-items:start; }
+    .left-col, .right-col { display: grid; gap: 16px; align-items:start; }
+    .card { padding: 16px; }
+    .card h2, .card h3 { margin: 0 0 12px; color: var(--primary); }
+    .helper { color: var(--muted); font-size: 0.92rem; }
+    .work-buttons, .mode-buttons, .shot-buttons, .zone-buttons, .player-buttons, .situation-toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .tools-card h3 { margin-bottom: 10px; text-align:center; }
+    .work-btn.active, .mode-btn.active, .shot-btn.active, .zone-btn.active, .player-chip.active { outline: 3px solid rgba(21,101,192,0.22); box-shadow: 0 0 0 4px rgba(21,101,192,0.16), 0 8px 16px rgba(10,35,66,0.14); transform: translateY(-1px); }
+    .work-btn { padding: 10px 12px; background: #edf4ff; color: var(--primary); border-color: #d7e6fd; }
+    .situation-count-btn { min-width: 34px; text-align:center; padding: 6px 8px; }
+    .situation-count-btn.active { background: var(--primary); color:#fff; border-color: var(--primary); box-shadow: 0 8px 16px rgba(13,71,161,0.2); }
+    .shot-btn.last-used { outline: 4px solid rgba(255,255,255,0.9); box-shadow: 0 0 0 5px rgba(21,101,192,0.22), 0 10px 18px rgba(10,35,66,0.18); }
+    .mode-btn { background: #f3f7fa; color: var(--ink); }
+    .mode-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .shot-btn, .zone-btn, .player-chip { color: #fff; border: none; }
+    .shot-btn { transition: none !important; }
+    .shot-btn.active { filter: brightness(1.03); }
+    .situation-nav { display:flex; flex-wrap:wrap; gap:8px; margin: 0 0 10px; }
+    .situation-nav-btn { background:#eef5ff; color:var(--primary); border-color:#d7e6fd; }
+    .situation-nav-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); box-shadow: 0 8px 16px rgba(13,71,161,0.18); }
+    .zone-btn { font-weight: 800; font-size: 0.68rem; line-height: 1.1; padding: 7px 8px; text-align: center; min-height: 42px; display:flex; align-items:center; justify-content:center; }
+    .meta-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .terrain-card { padding: 8px 10px 10px; }
+    .terrain-shell { background: linear-gradient(180deg, #fcfeff, #f2f7fc); border-radius: 18px; padding: 6px 8px 4px; }
+    .terrain-topbar { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
+    .legend { display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; }
+    .legend span { background:#edf4ff; color:var(--primary); padding:6px 10px; border-radius:999px; }
+    svg { width: 100%; height: auto; display: block; touch-action: manipulation; }
+    .tools-card { padding: 16px; align-self:start; }
+    .hero-play-btn { background: #ff8f00; color: #fff; border-color: #ff8f00; box-shadow: 0 10px 18px rgba(255,143,0,0.22); font-size: 0.98rem; padding: 10px 14px; }
+    .hero-play-btn.active { background: #2e7d32; border-color: #2e7d32; box-shadow: 0 10px 18px rgba(46,125,50,0.22); }
+    .tool-group { display:grid; gap:10px; margin-bottom:14px; }
+    .tool-group:last-child { margin-bottom:0; }
+    .statusbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:0.92rem; }
+    .status-pill { background:#eef5ff; padding:7px 10px; border-radius:999px; }
+    .import-box { display:grid; gap:10px; }
+    .play-btn.active { background: var(--success); color:#fff; border-color: var(--success); box-shadow: 0 8px 16px rgba(46,125,50,0.2); }
+    .mini { font-size:0.88rem; color:var(--muted); }
+    .footer-note { text-align:right; color:var(--muted); font-size:0.9rem; padding: 2px 6px 6px 0; font-style: italic; }
+    .compact-label { font-size:0.76rem; }
+    .tiny { font-size:0.82rem; color:var(--muted); }
+    .inline { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .number-input { width: 90px; }
+    .separator { height:1px; background:#e6eef7; margin:4px 0; }
+    @media (max-width: 1120px) {
+      .top-row { grid-template-columns: 1fr; }
+      .top-fields { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 860px) {
+      .header-grid { grid-template-columns: 74px minmax(0,1fr); }
+      .icon-slot { min-height: 74px; font-size: 0.8rem; }
+      .top-fields { grid-template-columns: 1fr; }
+      .top-actions { flex-wrap: wrap; }
+    }
+    @media (max-width: 780px) {
+      body { padding: 10px; }
+      .meta-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="panel header">
+      <div class="header-grid">
+        <div class="icon-slot"><img src="logo_app.png" alt="Logo de l'application" /></div>
+        <div class="header-main">
+          <div class="top-fields">
+            <div class="field">
+              <label class="compact-label" for="studentName">Nom et prénom</label>
+              <input id="studentName" type="text" maxlength="30" placeholder="Ex. Quentin Delisle" />
+            </div>
+            <div class="field">
+              <label class="compact-label" for="theme">Thème choisi</label>
+              <input id="theme" type="text" placeholder="Ex. Fixer l’adversaire au fond" />
+            </div>
+          </div>
+          <div class="top-actions">
+            <div class="field" style="min-width:132px; gap:3px;">
+              <label class="compact-label">Nombre de situations</label>
+              <div id="situationCountButtons" class="situation-toolbar"></div>
+            </div>
+            <button id="saveBtn" class="btn-primary">Sauvegarder</button>
+            <button id="importJsonBtn" class="btn-accent">Importer</button>
+            <input id="importJsonInput" type="file" accept="application/json,.json" hidden />
+            <button id="fullscreenBtn" class="btn-muted">Plein écran</button>
+            <button id="resetCurrentBtn" class="btn-danger">Effacer la situation</button>
+            <button id="installBtn" class="btn-success" hidden>Installer</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="top-row">
+        <div class="left-col">
+          <div class="panel tools-card">
+            <h3>Outils de dessin</h3>
+
+            <div class="tool-group">
+              <div class="inline"><strong>1. Placer Joueurs</strong></div>
+              <div class="player-buttons" id="playerButtons"></div>
+            </div>
+
+            <div class="tool-group">
+              <div class="inline"><strong>2. Placer les frappes</strong></div>
+              <div class="shot-buttons" id="shotButtons"></div>
+              <div class="inline">
+                <button id="undoShotBtn" class="btn-muted">Effacer le dernier coup</button>
+                <button id="playShotsBtn" class="hero-play-btn play-btn">🎥 Visualiser les frappes dans l'ordre</button>
+              </div>
+            </div>
+
+            <div class="tool-group">
+              <div class="inline"><strong>3. Placer des zones</strong></div>
+              <div class="zone-buttons" id="zoneButtons"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-col">
+          <div class="panel terrain-card">
+            <div class="terrain-shell">
+              <div id="situationNav" class="situation-nav"></div>
+              <svg id="courtSvg" viewBox="0 0 1000 560" aria-label="Terrain de badminton interactif"></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel card">
+        <h2>Dispositif</h2>
+        <div class="field">
+          <label for="situationTitle">Titre de la situation</label>
+          <input id="situationTitle" type="text" placeholder="Ex. Routine amorti / dégagé" />
+        </div>
+        <div class="separator"></div>
+        <div class="field">
+          <label>Forme de travail choisie</label>
+          <div class="work-buttons" id="workButtons"></div>
+        </div>
+        <div class="field">
+          <label for="deviceText">Explications du dispositif / consignes</label>
+          <textarea id="deviceText" placeholder="Décris le rôle de chacun, la réussite attendue, le critère d’efficacité, les répétitions... " style="min-height:240px"></textarea>
+        </div>
+        <div class="field">
+          <label for="workAdvice">Rappels de la forme de travail</label>
+          <textarea id="workAdvice" readonly style="min-height:60px"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">By Quentin Delisle</div>
+  </div>
+
+<script>
+(() => {
+  const svg = document.getElementById('courtSvg');
+  const studentName = document.getElementById('studentName');
+  const theme = document.getElementById('theme');
+  const situationTitle = document.getElementById('situationTitle');
+  const situationCountButtons = document.getElementById('situationCountButtons');
+  const deviceText = document.getElementById('deviceText');
+  const workAdvice = document.getElementById('workAdvice');
+  const playerButtons = document.getElementById('playerButtons');
+  const workButtons = document.getElementById('workButtons');
+  const shotButtons = document.getElementById('shotButtons');
+  const zoneButtons = document.getElementById('zoneButtons');
+  const importJsonInput = document.getElementById('importJsonInput');
+  const situationNav = document.getElementById('situationNav');
+
+  const works = {
+    multivolant: {
+      label: 'Multivolant',
+      help: 'Le partenaire prépare plusieurs volants et vise une ou plusieurs zones identifiées dans le terrain adverse. Utile pour travailler un coup précis, un ou plusieurs déplacements, le replacement. Possible de jouer sur l’intensité en enchaînant les lancers plus facilement.'
+    },
+    posteFixe: {
+      label: 'Poste fixe',
+      help: 'Le partenaire se place dans une zone et lance les volants depuis cette zone pour créer une continuité pour celui qui travaille. Utile pour faire travailler l’atteinte d’une zone précise ou la réalisation d’un coup précis à partir de plusieurs endroits du terrain. Peut également servir pour améliorer le déplacement de celui qui travaille.'
+    },
+    routine: {
+      label: 'Routine',
+      help: 'Les deux joueurs réalisent un enchaînement de coups sans variation. Utile pour améliorer son déplacement en l’anticipant car le prochain coup est déjà prévu. La routine peut être sur 2, 3, 4 ou 5 frappes consécutives.'
+    },
+    matchTheme: {
+      label: 'Match à thème',
+      help: 'Opposition au cours de laquelle les joueurs doivent valoriser une zone, un coup, un enchaînement de coup qui apporte un bonus au score. On peut envisager du 2c1 ou du 1c1.'
+    }
+  };
+
+  const shots = {
+    service: { label:'Service', color:'#4f5b62', kind:'service' },
+    smash: { label:'Smash', color:'#7CFC00', kind:'line' },
+    amorti: { label:'Amorti', color:'#ec6aa7', kind:'drop' },
+    degage: { label:'Dégagé', color:'#e53935', kind:'clear' },
+    contreAmorti: { label:'Contre amorti', color:'#fdd835', kind:'counterdrop' },
+    drive: { label:'Drive', color:'#fb8c00', kind:'drive' },
+    kill: { label:'Kill', color:'#111111', kind:'kill' },
+    lob: { label:'Lob', color:'#8e24aa', kind:'lob' }
+  };
+
+  const zoneTypes = {
+    autorisee: { label:'Zone autorisée', fill:'rgba(46,125,50,0.28)', stroke:'#2e7d32', text:'OK', textColor:'#1b5e20', icon:'✓' },
+    interdite: { label:'Zone interdite', fill:'rgba(244,67,54,0.24)', stroke:'#c62828', text:'⛔', textColor:'#b71c1c', icon:'⛔' },
+    bonus: { label:'Bonus', fill:'rgba(201,151,0,0.26)', stroke:'#c99700', text:'BONUS', textColor:'#b8860b', icon:'★' },
+    malus: { label:'Malus', fill:'rgba(255,82,82,0.20)', stroke:'#d32f2f', text:'MALUS', textColor:'#c62828', icon:'−' }
+  };
+
+  const modes = {
+    placement: 'Placer Joueurs',
+    frappe: 'Indiquer une frappe',
+    zone: 'Indiquer une zone'
+  };
+
+  const geometry = {
+    x: [60, 108, 369, 499, 629, 890, 940],
+    y: [60, 92, 279, 466, 500]
+  };
+
+  const storageKey = 'eps-badminton-situations-v17';
+  let deferredPrompt = null;
+  const playback = { active:false, shotIndex:-1, progress:0, playerPositions:[], fromPositions:[], toPositions:[], rafId:null };
+
+  let state = loadState() || {
+    meta: { studentName: '', theme: '' },
+    situations: [createSituation()],
+    currentSituationIndex: 0,
+    ui: {
+      activeMode: 'placement',
+      activePlayer: 0,
+      activeShot: 'service',
+      activeZoneType: 'autorisee',
+      pendingShotStart: null,
+      flashLabels: [],
+      selectedAnnotation: null,
+      lastPlacedShot: 'service',
+      isPlayingShots: false,
+      playIndex: -1
+    }
+  };
+
+  function createSituation() {
+    return {
+      title: '',
+      workKey: 'multivolant',
+      deviceText: '',
+      players: [
+        { id:0, label:'Joueur vert', color:'#4caf50', zoneId:null },
+        { id:1, label:'Partenaire', color:'#e53935', zoneId:null },
+        { id:2, label:'Partenaire 2', color:'#e53935', zoneId:null }
+      ],
+      shots: [],
+      zoneAnnotations: []
+    };
+  }
+
+  function getSituation() {
+    return state.situations[state.currentSituationIndex];
+  }
+
+  function getStudentFirstName() {
+    const raw = (state.meta.studentName || studentName.value || '').trim();
+    if (!raw) return 'Élève';
+    return raw.split(/\s+/)[0] || 'Élève';
+  }
+
+  function getPlayerDisplayLabel(player, idx) {
+    if (idx === 0) return getStudentFirstName();
+    const s = getSituation();
+    const secondPartnerUsed = !!s.players[2]?.zoneId;
+    if (idx === 1) return secondPartnerUsed ? 'Partenaire 1' : 'Partenaire';
+    if (idx === 2) return 'Partenaire 2';
+    return player.label || 'Partenaire';
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (parsed?.ui && !parsed.ui.lastPlacedShot) parsed.ui.lastPlacedShot = parsed.ui.activeShot || 'service';
+      if (parsed?.ui && parsed.ui.isPlayingShots === undefined) { parsed.ui.isPlayingShots = false; parsed.ui.playIndex = -1; }
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  function syncMetaCounts() {
+    state.meta.studentName = studentName.value;
+    state.meta.theme = theme.value;
+  }
+
+  function saveState() {
+    localStorage.setItem(storageKey, JSON.stringify(state));
+    syncMetaCounts();
+  }
+
+  function resetUiTransient() {
+    state.ui.pendingShotStart = null;
+    state.ui.flashLabels = [];
+    state.ui.selectedAnnotation = null;
+  }
+
+  function syncFormFromState() {
+    const s = getSituation();
+    studentName.value = state.meta.studentName || '';
+    theme.value = state.meta.theme || '';
+    situationTitle.value = s.title || '';
+    deviceText.value = s.deviceText || '';
+    workAdvice.value = works[s.workKey].help;
+  }
+
+  function buildZones() {
+    const [x0,x1,x2,xNet,x3,x4,x5] = geometry.x;
+    const [y0,y1,y2,y3,y4] = geometry.y;
+    const zones = [];
+
+    function addGrid(idPrefix, xA, xB, yA, yB, rows, cols, side, section) {
+      const w = (xB - xA) / cols;
+      const h = (yB - yA) / rows;
+      for (let r=0; r<rows; r++) {
+        for (let c=0; c<cols; c++) {
+          const x = xA + c * w;
+          const y = yA + r * h;
+          zones.push({
+            id: `${idPrefix}-${r}-${c}`,
+            x, y, w, h,
+            cx: x + w/2,
+            cy: y + h/2,
+            side, section
+          });
+        }
+      }
+    }
+
+    addGrid('bg-topalley', x0, x1, y0, y1, 1, 1, 'left', 'back');
+    addGrid('bg-up', x0, x1, y1, y2, 4, 1, 'left', 'back');
+    addGrid('bg-down', x0, x1, y2, y3, 4, 1, 'left', 'back');
+    addGrid('bg-botalley', x0, x1, y3, y4, 1, 1, 'left', 'back');
+
+    addGrid('bd-topalley', x4, x5, y0, y1, 1, 1, 'right', 'back');
+    addGrid('bd-up', x4, x5, y1, y2, 4, 1, 'right', 'back');
+    addGrid('bd-down', x4, x5, y2, y3, 4, 1, 'right', 'back');
+    addGrid('bd-botalley', x4, x5, y3, y4, 1, 1, 'right', 'back');
+
+    addGrid('cg-up', x1, x2, y1, y2, 4, 3, 'left', 'central-high');
+    addGrid('cg-down', x1, x2, y2, y3, 4, 3, 'left', 'central-low');
+    addGrid('cd-up', x3, x4, y1, y2, 4, 3, 'right', 'central-high');
+    addGrid('cd-down', x3, x4, y2, y3, 4, 3, 'right', 'central-low');
+
+    addGrid('ag-up', x2, xNet, y1, y2, 4, 2, 'left', 'front-high');
+    addGrid('ag-down', x2, xNet, y2, y3, 4, 2, 'left', 'front-low');
+    addGrid('ad-up', xNet, x3, y1, y2, 4, 2, 'right', 'front-high');
+    addGrid('ad-down', xNet, x3, y2, y3, 4, 2, 'right', 'front-low');
+
+    return zones;
+  }
+
+  const zones = buildZones();
+  const zoneById = Object.fromEntries(zones.map(z => [z.id, z]));
+  const sideCenters = {
+    left: { x: (geometry.x[0] + geometry.x[3]) / 2, y: (geometry.y[0] + geometry.y[4]) / 2 },
+    right: { x: (geometry.x[3] + geometry.x[6]) / 2, y: (geometry.y[0] + geometry.y[4]) / 2 }
+  };
+
+  function areOppositeSides(a, b) {
+    return zoneById[a] && zoneById[b] && zoneById[a].side !== zoneById[b].side;
+  }
+
+  function renderSituationNav() {
+    situationNav.innerHTML = '';
+    state.situations.forEach((_, idx) => {
+      const b = document.createElement('button');
+      b.className = 'btn-muted situation-nav-btn' + (state.currentSituationIndex === idx ? ' active' : '');
+      b.textContent = `Situation ${idx + 1}`;
+      b.onpointerdown = (e) => {
+        e.preventDefault();
+        state.currentSituationIndex = idx;
+        stopPlayback(false);
+        resetUiTransient();
+        syncFormFromState();
+        renderAll();
+      };
+      situationNav.appendChild(b);
+    });
+  }
+
+  function renderButtons() {
+    situationCountButtons.innerHTML = '';
+    [1,2,3].forEach(count => {
+      const b = document.createElement('button');
+      b.className = 'btn-muted situation-count-btn' + (state.situations.length === count ? ' active' : '');
+      b.textContent = String(count);
+      b.onpointerdown = (e) => {
+        e.preventDefault();
+        const current = state.situations.length;
+        if (count > current) {
+          for (let i=current; i<count; i++) state.situations.push(createSituation());
+        } else if (count < current) {
+          state.situations = state.situations.slice(0, count);
+          if (state.currentSituationIndex >= state.situations.length) state.currentSituationIndex = state.situations.length - 1;
+        }
+        if (state.currentSituationIndex < 0) state.currentSituationIndex = 0;
+        stopPlayback(false);
+        resetUiTransient();
+        syncFormFromState();
+        saveState();
+        renderAll();
+      };
+      situationCountButtons.appendChild(b);
+    });
+
+    renderSituationNav();
+
+    workButtons.innerHTML = '';
+    Object.entries(works).forEach(([key, val]) => {
+      const b = document.createElement('button');
+      b.className = 'work-btn' + (getSituation().workKey === key ? ' active' : '');
+      b.textContent = val.label;
+      b.onpointerdown = (e) => { e.preventDefault(); getSituation().workKey = key; workAdvice.value = val.help; stopPlayback(false); saveState(); renderAll(); };
+      workButtons.appendChild(b);
+    });
+    playerButtons.innerHTML = '';
+    getSituation().players.forEach((player, idx) => {
+      const b = document.createElement('button');
+      b.className = 'player-chip' + (state.ui.activePlayer === idx ? ' active' : '');
+      b.style.background = player.color;
+      b.textContent = getPlayerDisplayLabel(player, idx);
+      b.onpointerdown = (e) => { e.preventDefault(); state.ui.activePlayer = idx; state.ui.activeMode = 'placement'; stopPlayback(false); renderAll(); };
+      playerButtons.appendChild(b);
+    });
+
+    shotButtons.innerHTML = '';
+    Object.entries(shots).forEach(([key, shot]) => {
+      const b = document.createElement('button');
+      b.className = 'shot-btn' + (state.ui.activeShot === key ? ' active' : '') + (state.ui.lastPlacedShot === key ? ' last-used' : '');
+      b.textContent = shot.label;
+      b.style.background = shot.color;
+      b.style.color = ['kill', 'service'].includes(key) ? '#fff' : '#10243c';
+      b.onpointerdown = (e) => {
+        e.preventDefault();
+        state.ui.activeShot = key;
+        state.ui.activeMode = 'frappe';
+        state.ui.pendingShotStart = null;
+        stopPlayback(false);
+        renderButtons();
+        updateStatus();
+      };
+      shotButtons.appendChild(b);
+    });
+
+    const playBtn = document.getElementById('playShotsBtn');
+    if (playBtn) {
+      playBtn.classList.toggle('active', !!playback.active);
+      playBtn.textContent = playback.active ? '🎥 Arrêter la visualisation' : "🎥 Visualiser les frappes dans l'ordre";
+    }
+
+    zoneButtons.innerHTML = '';
+    Object.entries(zoneTypes).forEach(([key, zoneType]) => {
+      const b = document.createElement('button');
+      b.className = 'zone-btn' + (state.ui.activeZoneType === key ? ' active' : '');
+      b.textContent = `${zoneType.icon} ${zoneType.label}`;
+      b.style.background = zoneType.fill.replace('0.28','0.65').replace('0.24','0.58').replace('0.26','0.60').replace('0.20','0.50');
+      b.style.border = `2px solid ${zoneType.stroke}`;
+      b.style.color = key === 'bonus' ? '#10243c' : '#fff';
+      b.onpointerdown = (e) => { e.preventDefault(); state.ui.activeZoneType = key; state.ui.activeMode = 'zone'; stopPlayback(false); renderAll(); };
+      zoneButtons.appendChild(b);
+    });
+  }
+
+  function createSvgEl(tag, attrs = {}) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
+    return el;
+  }
+
+  function drawCourtBase() {
+    svg.innerHTML = '';
+    const [x0,x1,x2,xNet,x3,x4,x5] = geometry.x;
+    const [y0,y1,y2,y3,y4] = geometry.y;
+
+    const bg = createSvgEl('rect', { x: 30, y: 30, width: 940, height: 500, rx: 20, fill: '#f7fbff' });
+    const court = createSvgEl('rect', { x: x0, y: y0, width: x5 - x0, height: y4 - y0, rx: 10, fill: '#1976d2' });
+    svg.appendChild(bg);
+    svg.appendChild(court);
+
+    const lineGroup = createSvgEl('g', { stroke: '#111111', 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round' });
+    [
+      [x0,y0,x5,y0],[x0,y4,x5,y4],[x0,y0,x0,y4],[x5,y0,x5,y4],
+      [x1,y0,x1,y4],[x2,y0,x2,y4],[xNet,y0,xNet,y4],[x3,y0,x3,y4],[x4,y0,x4,y4],
+      [x0,y1,x5,y1],[x0,y3,x5,y3],
+      [x0,y2,x2,y2],[x3,y2,x5,y2]
+    ].forEach(([xa,ya,xb,yb]) => lineGroup.appendChild(createSvgEl('line', { x1:xa, y1:ya, x2:xb, y2:yb })));
+    svg.appendChild(lineGroup);
+
+    const netGroup = createSvgEl('g');
+    const netBand = createSvgEl('rect', { x:xNet-4, y:y0-10, width:8, height:(y4-y0)+20, rx:2, fill:'rgba(120,130,140,0.14)', stroke:'rgba(80,90,100,0.45)', 'stroke-width':1 });
+    netGroup.appendChild(netBand);
+    for (let hy = y0 - 6; hy <= y4 + 6; hy += 12) {
+      netGroup.appendChild(createSvgEl('line', { x1:xNet-4, y1:hy, x2:xNet+4, y2:hy+6, stroke:'rgba(120,130,140,0.55)', 'stroke-width':1 }));
+      netGroup.appendChild(createSvgEl('line', { x1:xNet+4, y1:hy, x2:xNet-4, y2:hy+6, stroke:'rgba(180,190,198,0.35)', 'stroke-width':1 }));
+    }
+    const net = createSvgEl('line', { x1:xNet, y1:y0-12, x2:xNet, y2:y4+12, stroke:'#6b7680', 'stroke-width':1.6 });
+    const topPost = createSvgEl('circle', { cx:xNet, cy:y0-16, r:4, fill:'#ffffff', stroke:'#263238', 'stroke-width':2 });
+    const bottomPost = createSvgEl('circle', { cx:xNet, cy:y4+16, r:4, fill:'#ffffff', stroke:'#263238', 'stroke-width':2 });
+    svg.appendChild(netGroup);
+    svg.appendChild(net);
+    svg.appendChild(topPost);
+    svg.appendChild(bottomPost);
+  }
+
+  function drawZoneAnnotations() {
+    const s = getSituation();
+    const g = createSvgEl('g');
+    s.zoneAnnotations.forEach((ann, annIndex) => {
+      const z = zoneById[ann.zoneId];
+      const t = zoneTypes[ann.type];
+      if (!z || !t) return;
+      const rect = createSvgEl('rect', {
+        x: z.x + 3, y: z.y + 3, width: Math.max(0, z.w - 6), height: Math.max(0, z.h - 6), rx: 6,
+        fill: t.fill, stroke: t.stroke, 'stroke-width': state.ui.selectedAnnotation === annIndex ? 4 : 2
+      });
+      rect.style.cursor = 'pointer';
+      rect.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.ui.selectedAnnotation = annIndex;
+        renderAll();
+      });
+      g.appendChild(rect);
+
+      const boxW = Math.max(0, z.w - 12);
+      const boxH = Math.max(0, z.h - 12);
+      const fs = Math.max(10, Math.min(16, boxW / (ann.type === 'autorisee' ? 7.2 : 5.8), boxH * 0.34));
+      const text = createSvgEl('text', {
+        x: z.cx, y: z.cy + fs * 0.30, 'text-anchor': 'middle', 'font-size': fs,
+        'font-weight': 900, fill: t.textColor, 'pointer-events': 'none'
+      });
+      text.textContent = t.text;
+      g.appendChild(text);
+    });
+    svg.appendChild(g);
+  }
+
+  function pathForShot(shotKey, start, end) {
+    const dx = end.cx - start.cx;
+    const dy = end.cy - start.cy;
+    const distance = Math.hypot(dx, dy);
+    const topY = geometry.y[0] + 6;
+    const peakY = (rise) => Math.max(topY, Math.min(start.cy, end.cy) - rise);
+
+    switch (shots[shotKey].kind) {
+      case 'line':
+      case 'drive':
+        return `M ${start.cx} ${start.cy} L ${end.cx} ${end.cy}`;
+      case 'drop': {
+        const rise = Math.max(22, Math.min(44, distance * 0.10 + 8));
+        const py = peakY(rise);
+        const qx = start.cx + dx * 0.5;
+        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+      }
+      case 'clear': {
+        const rise = Math.max(190, Math.min(275, distance * 0.46 + 105));
+        const py = peakY(rise);
+        const qx = start.cx + dx * 0.5;
+        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+      }
+      case 'counterdrop': {
+        const rise = Math.max(24, Math.min(52, distance * 0.09 + 8));
+        const py = peakY(rise);
+        const qx = start.cx + dx * 0.5;
+        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+      }
+      case 'kill': {
+        const c1x = start.cx + dx * 0.18;
+        const c1y = start.cy + dy * 0.10 - 10;
+        const c2x = start.cx + dx * 0.72;
+        const c2y = start.cy + dy * 0.84;
+        return `M ${start.cx} ${start.cy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${end.cx} ${end.cy}`;
+      }
+      case 'lob': {
+        const rise = Math.max(195, Math.min(280, distance * 0.45 + 110));
+        const py = peakY(rise);
+        const qx = start.cx + dx * 0.5;
+        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+      }
+      case 'service': {
+        const rise = Math.max(58, Math.min(108, distance * 0.18 + 36));
+        const py = peakY(rise);
+        const qx = start.cx + dx * 0.5;
+        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+      }
+      default:
+        return `M ${start.cx} ${start.cy} L ${end.cx} ${end.cy}`;
+    }
+  }
+
+  function buildMarkers() {
+    const defs = createSvgEl('defs');
+    Object.entries(shots).forEach(([key,shot]) => {
+      const marker = createSvgEl('marker', { id:'arrow-'+key, viewBox:'0 0 10 10', refX:'8.4', refY:'5', markerWidth:'3.9', markerHeight:'3.9', orient:'auto-start-reverse' });
+      marker.appendChild(createSvgEl('path', { d:'M 0 0 L 10 5 L 0 10 z', fill: shot.color, stroke: shot.color }));
+      defs.appendChild(marker);
+    });
+    return defs;
+  }
+
+  function stopPlayback(render = false) {
+    playback.active = false;
+    playback.shotIndex = -1;
+    playback.progress = 0;
+    playback.playerPositions = [];
+    playback.fromPositions = [];
+    playback.toPositions = [];
+    if (playback.rafId) cancelAnimationFrame(playback.rafId);
+    playback.rafId = null;
+    state.ui.isPlayingShots = false;
+    state.ui.playIndex = -1;
+    if (render) renderAll();
+  }
+
+  function getPathMetrics(pathD, progress = 1) {
+    const temp = createSvgEl('path', { d: pathD, fill: 'none', stroke: 'none' });
+    svg.appendChild(temp);
+    const total = temp.getTotalLength();
+    const point = temp.getPointAtLength(Math.max(0.001, total * Math.max(0, Math.min(1, progress))));
+    temp.remove();
+    return { total, point };
+  }
+
+  function createShotPathElements(pathD, shotObj, shotDef, numberText, faded = false) {
+    const metrics = getPathMetrics(pathD, 1);
+    const gap = 22;
+    const mid = metrics.total / 2;
+    const before = Math.max(0, mid - gap / 2);
+    const after = Math.min(metrics.total, mid + gap / 2);
+
+    const makePath = (dasharray, dashoffset, withMarker) => {
+      const path = createSvgEl('path', {
+        d: pathD,
+        fill: 'none',
+        stroke: shotDef.color,
+        color: shotDef.color,
+        'stroke-width': shotObj.type === 'kill' ? 4.5 : 3.6,
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round',
+        opacity: faded ? 0.22 : 0.94,
+        'stroke-dasharray': dasharray,
+        'stroke-dashoffset': dashoffset
+      });
+      if (withMarker) path.setAttribute('marker-end', 'url(#arrow-' + shotObj.type + ')');
+      path.style.filter = 'drop-shadow(0 1px 0 rgba(255,255,255,0.35))';
+      return path;
+    };
+
+    const first = makePath(`${before} ${Math.max(0, metrics.total - before)}`, '0', false);
+    const secondVisible = Math.max(0, metrics.total - after);
+    const second = makePath(`${secondVisible} ${after}`, String(metrics.total - after), true);
+    const midpoint = getPathMetrics(pathD, 0.5).point;
+    const labelBg = createSvgEl('circle', { cx: midpoint.x, cy: midpoint.y, r: 12, fill: '#ffffff', opacity: 0.96 });
+    const label = createSvgEl('text', {
+      x: midpoint.x, y: midpoint.y + 5, fill: shotDef.color, 'font-size': 17, 'font-weight': 900, 'text-anchor': 'middle', opacity: faded ? 0.7 : 1
+    });
+    label.textContent = numberText;
+    return { first, second, labelBg, label };
+  }
+
+  function getRenderedPlayerPositions() {
+    const s = getSituation();
+    if (!playback.active || playback.shotIndex < 0) {
+      return s.players.map(player => {
+        const z = player.zoneId && zoneById[player.zoneId];
+        return z ? { x: z.cx, y: z.cy } : null;
+      });
+    }
+    return s.players.map((player, idx) => {
+      const base = playback.fromPositions[idx] || playback.playerPositions[idx] || null;
+      const target = playback.toPositions[idx] || base;
+      if (!base) return null;
+      const t = playback.progress;
+      return {
+        x: base.x + (target.x - base.x) * t,
+        y: base.y + (target.y - base.y) * t
+      };
+    });
+  }
+
+  function drawShots() {
+    const s = getSituation();
+    svg.appendChild(buildMarkers());
+    const g = createSvgEl('g');
+    let shuttlePoint = null;
+    s.shots.forEach((shotObj, idx) => {
+      const start = zoneById[shotObj.startZoneId];
+      const end = zoneById[shotObj.endZoneId];
+      if (!start || !end) return;
+      const shotDef = shots[shotObj.type];
+      const pathD = pathForShot(shotObj.type, start, end);
+      const isPast = playback.active && idx < playback.shotIndex;
+      const isCurrent = playback.active && idx === playback.shotIndex;
+      const isFuture = playback.active && idx > playback.shotIndex;
+      if (isFuture) return;
+
+      if (!playback.active || isPast) {
+        const split = createShotPathElements(pathD, shotObj, shotDef, String(idx + 1), isPast && playback.active);
+        g.appendChild(split.first);
+        g.appendChild(split.second);
+        g.appendChild(split.labelBg);
+        g.appendChild(split.label);
+      } else if (isCurrent) {
+        const path = createSvgEl('path', {
+          d: pathD, fill: 'none', stroke: shotDef.color, color: shotDef.color,
+          'stroke-width': shotObj.type === 'kill' ? 4.5 : 3.6,
+          'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0.98
+        });
+        const metrics = getPathMetrics(pathD, playback.progress);
+        path.setAttribute('stroke-dasharray', String(metrics.total));
+        path.setAttribute('stroke-dashoffset', String(metrics.total * (1 - playback.progress)));
+        path.style.filter = 'drop-shadow(0 1px 0 rgba(255,255,255,0.35))';
+        g.appendChild(path);
+        const midpoint = getPathMetrics(pathD, 0.5).point;
+        const labelBg = createSvgEl('circle', { cx: midpoint.x, cy: midpoint.y, r: 12, fill: '#ffffff', opacity: 0.96 });
+        const label = createSvgEl('text', { x: midpoint.x, y: midpoint.y + 5, fill: shotDef.color, 'font-size': 17, 'font-weight': 900, 'text-anchor': 'middle' });
+        label.textContent = String(idx + 1);
+        g.appendChild(labelBg);
+        g.appendChild(label);
+        shuttlePoint = { x: metrics.point.x, y: metrics.point.y, color: shotDef.color };
+      }
+    });
+    if (shuttlePoint) {
+      drawShuttlecock(g, shuttlePoint.x, shuttlePoint.y, -20, 0.9);
+    }
+    svg.appendChild(g);
+  }
+
+
+  
+  function drawShuttlecock(parent, x, y, angleDeg, scale = 1) {
+    const g = createSvgEl('g', { transform: `translate(${x} ${y}) rotate(${angleDeg}) scale(${scale})` });
+    const cork = createSvgEl('ellipse', { cx: 0, cy: 0, rx: 6, ry: 4.6, fill: '#fff7e6', stroke: '#5d4037', 'stroke-width': 1.4 });
+    const band = createSvgEl('path', { d: 'M -4 -1 Q 0 1 4 -1', fill: 'none', stroke: '#8d6e63', 'stroke-width': 1 });
+    const featherFill = createSvgEl('path', { d: 'M 4 -1 L 16 -9 L 15 -4 L 18 0 L 15 4 L 16 9 L 4 1 Z', fill: '#ffffff', stroke: '#546e7a', 'stroke-width': 1.1, 'stroke-linejoin': 'round' });
+    const feather1 = createSvgEl('line', { x1: 7, y1: -1, x2: 15, y2: -6, stroke: '#90a4ae', 'stroke-width': 0.9 });
+    const feather2 = createSvgEl('line', { x1: 7.5, y1: 0, x2: 16.5, y2: 0, stroke: '#90a4ae', 'stroke-width': 0.9 });
+    const feather3 = createSvgEl('line', { x1: 7, y1: 1, x2: 15, y2: 6, stroke: '#90a4ae', 'stroke-width': 0.9 });
+    [featherFill, feather1, feather2, feather3, cork, band].forEach(el => g.appendChild(el));
+    parent.appendChild(g);
+  }
+
+  function drawStickPlayer(parent, x, y, side, color, labelText, motionPhase = 0) {
+    const facing = side === 'right' ? -1 : 1;
+    const step = Math.sin(motionPhase * Math.PI * 4) * 3.4;
+    const bounce = Math.sin(motionPhase * Math.PI * 2) * 1.1;
+    const groundY = y + 26;
+    const hipY = groundY - 29 - bounce;
+    const shoulderY = hipY - 26;
+    const headY = shoulderY - 16;
+
+    const leftShoulderX = -9;
+    const rightShoulderX = 9;
+    const chestBaseY = shoulderY;
+    const chestApexY = shoulderY + 11;
+
+    const kneeFrontX = 10 + step * 0.35;
+    const kneeBackX = -8 - step * 0.15;
+    const footFrontX = 18 + step * 0.35;
+    const footBackX = -14 - step * 0.15;
+    const footFrontY = groundY;
+    const footBackY = groundY - 1;
+
+    const elbowRearX = -16;
+    const elbowRearY = shoulderY - 10;
+    const handRearX = -7;
+    const handRearY = shoulderY - 25;
+
+    const elbowFrontX = 15;
+    const elbowFrontY = shoulderY + 4;
+    const handFrontX = 11;
+    const handFrontY = shoulderY + 16;
+
+    const g = createSvgEl('g', { transform: `translate(${x} 0) scale(${facing} 1)` });
+    const shadow = createSvgEl('ellipse', { cx: 0, cy: groundY + 2, rx: 19, ry: 6.5, fill: 'rgba(16,36,60,0.18)' });
+    const head = createSvgEl('circle', { cx: 0, cy: headY, r: 9, fill: '#f6d4b8', stroke: color, 'stroke-width': 2.2 });
+
+    const torso = createSvgEl('path', {
+      d: `M ${leftShoulderX} ${chestBaseY} L ${rightShoulderX} ${chestBaseY} L 0 ${chestApexY} Z`,
+      fill: 'none',
+      stroke: color,
+      'stroke-width': 4.6,
+      'stroke-linejoin': 'round',
+      'stroke-linecap': 'round'
+    });
+    const bodyCore = createSvgEl('line', { x1: 0, y1: chestApexY, x2: 0, y2: hipY, stroke: color, 'stroke-width': 4.8, 'stroke-linecap': 'round' });
+
+    const armRear1 = createSvgEl('line', { x1: leftShoulderX, y1: chestBaseY, x2: elbowRearX, y2: elbowRearY, stroke: color, 'stroke-width': 4.2, 'stroke-linecap': 'round' });
+    const armRear2 = createSvgEl('line', { x1: elbowRearX, y1: elbowRearY, x2: handRearX, y2: handRearY, stroke: color, 'stroke-width': 4.2, 'stroke-linecap': 'round' });
+    const armFront1 = createSvgEl('line', { x1: rightShoulderX, y1: chestBaseY, x2: elbowFrontX, y2: elbowFrontY, stroke: color, 'stroke-width': 4, 'stroke-linecap': 'round' });
+    const armFront2 = createSvgEl('line', { x1: elbowFrontX, y1: elbowFrontY, x2: handFrontX, y2: handFrontY, stroke: color, 'stroke-width': 4, 'stroke-linecap': 'round' });
+
+    const kneeFrontY = hipY + 18;
+    const kneeBackY = hipY + 20;
+    const legFront1 = createSvgEl('line', { x1: 0, y1: hipY, x2: kneeFrontX, y2: kneeFrontY, stroke: color, 'stroke-width': 4.6, 'stroke-linecap': 'round' });
+    const legFront2 = createSvgEl('line', { x1: kneeFrontX, y1: kneeFrontY, x2: footFrontX, y2: footFrontY, stroke: color, 'stroke-width': 4.6, 'stroke-linecap': 'round' });
+    const legBack1 = createSvgEl('line', { x1: 0, y1: hipY, x2: kneeBackX, y2: kneeBackY, stroke: color, 'stroke-width': 4.6, 'stroke-linecap': 'round' });
+    const legBack2 = createSvgEl('line', { x1: kneeBackX, y1: kneeBackY, x2: footBackX, y2: footBackY, stroke: color, 'stroke-width': 4.6, 'stroke-linecap': 'round' });
+
+    const joints = [
+      [leftShoulderX, chestBaseY], [rightShoulderX, chestBaseY], [elbowRearX, elbowRearY], [elbowFrontX, elbowFrontY], [kneeFrontX, kneeFrontY], [kneeBackX, kneeBackY]
+    ].map(([cx, cy]) => createSvgEl('circle', { cx, cy, r: 2.8, fill: '#ffffff', stroke: color, 'stroke-width': 1.4 }));
+
+    const racketShaft = createSvgEl('line', { x1: handRearX - 2, y1: handRearY + 1, x2: handRearX - 18, y2: handRearY - 24, stroke: '#5d4037', 'stroke-width': 3.1, 'stroke-linecap': 'round' });
+    const racketHead = createSvgEl('ellipse', { cx: handRearX - 26, cy: handRearY - 36, rx: 7.5, ry: 12, fill: 'none', stroke: '#37474f', 'stroke-width': 2.2 });
+    const racketString1 = createSvgEl('line', { x1: handRearX - 26, y1: handRearY - 47, x2: handRearX - 26, y2: handRearY - 25, stroke: '#90a4ae', 'stroke-width': 0.9 });
+    const racketString2 = createSvgEl('line', { x1: handRearX - 31, y1: handRearY - 36, x2: handRearX - 21, y2: handRearY - 36, stroke: '#90a4ae', 'stroke-width': 0.9 });
+
+    [shadow, head, torso, bodyCore, armRear1, armRear2, armFront1, armFront2, legFront1, legFront2, legBack1, legBack2, ...joints, racketShaft, racketHead, racketString1, racketString2].forEach(el => g.appendChild(el));
+    parent.appendChild(g);
+
+    const label = createSvgEl('text', {
+      x: x,
+      y: y + 52,
+      'text-anchor': 'middle',
+      'font-size': 16,
+      'font-weight': 800,
+      fill: '#10243c'
+    });
+    label.textContent = labelText;
+    parent.appendChild(label);
+  }
+
+  function drawPlayers() {
+    const s = getSituation();
+    const positions = getRenderedPlayerPositions();
+    const g = createSvgEl('g');
+
+    s.players.forEach((player, idx) => {
+      const pos = positions[idx];
+      if (!pos) return;
+      const side = player.zoneId && zoneById[player.zoneId]?.side;
+      drawStickPlayer(g, pos.x, pos.y, side, idx === 0 ? '#67c96b' : '#e53935', getPlayerDisplayLabel(player, idx), playback.active ? playback.progress : 0);
+    });
+
+    svg.appendChild(g);
+  }
+
+
+  function drawFlashLabels() {
+    const now = Date.now();
+    state.ui.flashLabels = state.ui.flashLabels.filter(l => now - l.ts < 3000);
+    if (!state.ui.flashLabels.length) return;
+    const g = createSvgEl('g');
+    state.ui.flashLabels.forEach(item => {
+      const text = createSvgEl('text', { x:item.x, y:item.y, fill:item.color, 'font-size':20, 'font-weight':900, 'text-anchor':'middle' });
+      text.textContent = item.text;
+      g.appendChild(text);
+    });
+    svg.appendChild(g);
+    requestAnimationFrame(() => setTimeout(renderAll, 150));
+  }
+
+  function getZoneFromPoint(px, py) {
+    const padding = 16;
+    let best = null;
+    let bestScore = Infinity;
+
+    zones.forEach(z => {
+      const insideExpanded = px >= z.x - padding && px <= z.x + z.w + padding && py >= z.y - padding && py <= z.y + z.h + padding;
+      if (!insideExpanded) return;
+      const dx = px - z.cx;
+      const dy = py - z.cy;
+      const score = dx * dx + dy * dy;
+      if (score < bestScore) {
+        bestScore = score;
+        best = z;
+      }
+    });
+
+    if (best) return best;
+
+    zones.forEach(z => {
+      if (px >= z.x && px <= z.x + z.w && py >= z.y && py <= z.y + z.h) {
+        const dx = px - z.cx;
+        const dy = py - z.cy;
+        const score = dx * dx + dy * dy;
+        if (score < bestScore) {
+          bestScore = score;
+          best = z;
+        }
+      }
+    });
+
+    return best;
+  }
+
+  function drawHitAreas() {
+    const [x0,,,,,,x5] = geometry.x;
+    const [y0,,,,y4] = geometry.y;
+    const overlay = createSvgEl('rect', {
+      x: x0, y: y0, width: x5 - x0, height: y4 - y0,
+      fill: 'rgba(255,255,255,0.001)'
+    });
+    overlay.style.cursor = 'pointer';
+
+    const handler = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const transformed = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const zone = getZoneFromPoint(transformed.x, transformed.y);
+      if (zone) onZoneClick(zone.id);
+    };
+
+    overlay.addEventListener('pointerdown', handler, { passive: false });
+    overlay.addEventListener('click', handler);
+    svg.appendChild(overlay);
+  }
+
+  function onZoneClick(zoneId) {
+    const s = getSituation();
+
+    if (state.ui.activeMode === 'placement') {
+      stopPlayback(false);
+      s.players[state.ui.activePlayer].zoneId = zoneId;
+      saveState();
+      renderAll();
+      return;
+    }
+
+    if (state.ui.activeMode === 'frappe') {
+      stopPlayback(false);
+      if (!state.ui.pendingShotStart) {
+        state.ui.pendingShotStart = zoneId;
+        const z = zoneById[zoneId];
+        state.ui.flashLabels.push({ text:'Début', x:z.cx, y:z.cy-12, color:shots[state.ui.activeShot].color, ts:Date.now() });
+        renderAll();
+        return;
+      }
+
+      const startZoneId = state.ui.pendingShotStart;
+      if (!areOppositeSides(startZoneId, zoneId)) {
+        const z = zoneById[zoneId];
+        state.ui.flashLabels.push({ text:'Fin dans l’autre camp', x:z.cx, y:z.cy-12, color:'#c62828', ts:Date.now() });
+        renderAll();
+        return;
+      }
+
+      s.shots.push({ type: state.ui.activeShot, startZoneId, endZoneId: zoneId });
+      state.ui.lastPlacedShot = state.ui.activeShot;
+      const z1 = zoneById[startZoneId], z2 = zoneById[zoneId];
+      state.ui.flashLabels.push({ text:'Début', x:z1.cx, y:z1.cy-12, color:shots[state.ui.activeShot].color, ts:Date.now() });
+      state.ui.flashLabels.push({ text:'Fin', x:z2.cx, y:z2.cy-12, color:shots[state.ui.activeShot].color, ts:Date.now() });
+      state.ui.pendingShotStart = null;
+      saveState();
+      renderAll();
+      return;
+    }
+
+    if (state.ui.activeMode === 'zone') {
+      stopPlayback(false);
+      const existingIndex = s.zoneAnnotations.findIndex(a => a.zoneId === zoneId);
+      if (existingIndex >= 0 && s.zoneAnnotations[existingIndex].type === state.ui.activeZoneType) {
+        s.zoneAnnotations.splice(existingIndex, 1);
+        state.ui.selectedAnnotation = null;
+      } else {
+        if (existingIndex >= 0) s.zoneAnnotations.splice(existingIndex, 1);
+        s.zoneAnnotations.push({ zoneId, type: state.ui.activeZoneType });
+        state.ui.selectedAnnotation = s.zoneAnnotations.length - 1;
+      }
+      saveState();
+      renderAll();
+    }
+  }
+
+  function updateStatus() { }
+
+  function renderAll() {
+    const s = getSituation();
+    s.title = situationTitle.value;
+    s.deviceText = deviceText.value;
+    syncMetaCounts();
+    drawCourtBase();
+    drawZoneAnnotations();
+    drawShots();
+    drawPlayers();
+    drawFlashLabels();
+    drawHitAreas();
+    renderButtons();
+    updateStatus();
+    workAdvice.value = works[s.workKey].help;
+  }
+
+  [studentName, theme, situationTitle, deviceText].forEach(el => el.addEventListener('input', () => { saveState(); renderAll(); }));
+
+  document.getElementById('saveBtn').onclick = () => {
+    saveState();
+    const payload = JSON.stringify(state, null, 2);
+    const blob = new Blob([payload], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const safeName = ((state.meta.studentName || 'lecon').trim().replace(/[^a-zA-Z0-9À-ÿ-_ ]+/g,'').replace(/\s+/g,'_') || 'lecon');
+    a.href = url;
+    a.download = `${safeName}_badminton_lecon.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+    renderAll();
+  };
+
+  document.getElementById('resetCurrentBtn').onclick = () => {
+    state.situations[state.currentSituationIndex] = createSituation();
+    resetUiTransient();
+    syncFormFromState();
+    saveState();
+    renderAll();
+  };
+  document.getElementById('undoShotBtn').onclick = () => {
+    getSituation().shots.pop();
+    saveState();
+    renderAll();
+  };
+
+  function startShotsPlayback() {
+    const list = getSituation().shots;
+    if (!list.length) return;
+    stopPlayback(false);
+    playback.active = true;
+    playback.playerPositions = getSituation().players.map(player => {
+      const z = player.zoneId && zoneById[player.zoneId];
+      return z ? { x: z.cx, y: z.cy } : null;
+    });
+    state.ui.isPlayingShots = true;
+    state.ui.playIndex = 0;
+
+    function animateShot(idx) {
+      if (!playback.active) return;
+      if (idx >= list.length) {
+        setTimeout(() => stopPlayback(true), 280);
+        return;
+      }
+      const shot = list[idx];
+      const endZone = zoneById[shot.endZoneId];
+      const receiveSide = endZone?.side;
+      playback.shotIndex = idx;
+      playback.fromPositions = playback.playerPositions.map(p => p ? { ...p } : null);
+      const startZone = zoneById[shot.startZoneId];
+      const hitterSide = startZone?.side;
+      playback.toPositions = playback.playerPositions.map((p, playerIdx) => {
+        if (!p) return null;
+        const baseZone = getSituation().players[playerIdx].zoneId && zoneById[getSituation().players[playerIdx].zoneId];
+        if (!baseZone) return { ...p };
+        if (baseZone.side === receiveSide && endZone) return { x: endZone.cx, y: endZone.cy };
+        if (baseZone.side === hitterSide) {
+          const center = sideCenters[hitterSide];
+          return center ? { x: center.x, y: center.y } : { ...p };
+        }
+        return { ...p };
+      });
+      const duration = 1100;
+      const startTime = performance.now();
+
+      const frame = (now) => {
+        if (!playback.active) return;
+        const t = Math.min(1, (now - startTime) / duration);
+        playback.progress = t;
+        state.ui.playIndex = idx;
+        renderAll();
+        if (t < 1) {
+          playback.rafId = requestAnimationFrame(frame);
+        } else {
+          playback.playerPositions = playback.toPositions.map(p => p ? { ...p } : null);
+          setTimeout(() => animateShot(idx + 1), 180);
+        }
+      };
+      playback.rafId = requestAnimationFrame(frame);
+    }
+
+    animateShot(0);
+  }
+
+  document.getElementById('playShotsBtn').onclick = () => {
+    if (playback.active) {
+      stopPlayback(true);
+      return;
+    }
+    startShotsPlayback();
+  };
+
+  function importJsonFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        if (!parsed || !Array.isArray(parsed.situations) || !parsed.ui) throw new Error('Format JSON invalide');
+        stopPlayback(false);
+        state = parsed;
+        if (!state.ui.lastPlacedShot) state.ui.lastPlacedShot = state.ui.activeShot || 'service';
+        if (state.ui.isPlayingShots === undefined) { state.ui.isPlayingShots = false; state.ui.playIndex = -1; }
+        if (!state.situations.length) state.situations = [createSituation()];
+        state.currentSituationIndex = Math.max(0, Math.min(state.currentSituationIndex || 0, state.situations.length - 1));
+        stopPlayback(false);
+        resetUiTransient();
+        syncFormFromState();
+        saveState();
+        renderAll();
+      } catch (e) { alert('Import JSON impossible.'); }
+    };
+    reader.readAsText(file);
+  }
+
+  document.getElementById('importJsonBtn').onclick = () => importJsonInput.click();
+  importJsonInput.addEventListener('change', (e) => importJsonFile(e.target.files?.[0]));
+
+  document.getElementById('fullscreenBtn').onclick = async () => {
+    if (!document.fullscreenElement) await document.documentElement.requestFullscreen().catch(()=>{});
+    else await document.exitFullscreen().catch(()=>{});
+  };
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installBtn').hidden = false;
+  });
+
+  document.getElementById('installBtn').onclick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('installBtn').hidden = true;
+  };
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+  }
+
+  syncFormFromState();
+  renderAll();
+})();
+</script>
+</body>
+</html>
