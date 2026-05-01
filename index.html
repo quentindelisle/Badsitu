@@ -3,229 +3,406 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0d47a1" />
+  <meta name="theme-color" content="#0a1628" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>PWA EPS - Situations Badminton</title>
+  <title>N'EPS Badminton — Situations</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #eef3f8;
-      --panel: #ffffff;
-      --ink: #123;
-      --muted: #5b6878;
-      --primary: #0d47a1;
-      --primary-2: #1565c0;
-      --accent: #ff8f00;
-      --success: #2e7d32;
-      --danger: #c62828;
-      --gold: #c99700;
-      --court: #1565c0;
-      --line: #ffffff;
-      --shadow: 0 10px 24px rgba(10, 35, 66, 0.12);
-      --radius: 18px;
+      --bg:      #e8eef8;
+      --surface: #ffffff;
+      --sf2:     #f4f7fc;
+      --ink:     #0d1b2e;
+      --ink2:    #3d5166;
+      --ink3:    #7a90a8;
+      --navy:    #0a2045;
+      --blue:    #1254cc;
+      --blue2:   #1a68f0;
+      --sky:     #dce8fd;
+      --orange:  #f05a1a;
+      --green:   #1a8f52;
+      --red:     #c8183a;
+      --r:       10px;
+      --rs:      7px;
+      --ff-h:    'Syne', sans-serif;
+      --ff-b:    'DM Sans', sans-serif;
     }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; font-family: Inter, Arial, sans-serif; color: var(--ink); background: linear-gradient(180deg, #f6f9fc, #edf4fb); }
-    body { padding: 16px; }
-    .app { max-width: 1440px; margin: 0 auto; display: grid; gap: 16px; }
-    .panel { background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); }
-    .header { padding: 12px 14px; }
-    .header-grid { display:grid; grid-template-columns: 92px minmax(0,1fr); gap: 12px; align-items: stretch; }
-    .icon-slot { min-height: 92px; border: 1px solid #dbe7f4; border-radius: 20px; display:flex; align-items:center; justify-content:center; overflow:hidden; background: linear-gradient(180deg,#f8fbff,#edf4fb); padding:0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: var(--ff-b);
+      font-size: 13px;
+      color: var(--ink);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      padding: 5px;
+      gap: 5px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--navy);
+      border-radius: var(--r);
+      padding: 5px 10px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(135deg,rgba(18,84,204,.30) 0%,transparent 55%);
+      pointer-events:none;
+    }
+    .header-grid {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+    .icon-slot {
+      width: 38px; height: 38px; flex-shrink: 0;
+      border-radius: 8px; overflow: hidden;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.15);
+    }
     .icon-slot img { width:100%; height:100%; object-fit:contain; display:block; }
-    .header-main { display:grid; gap:8px; align-content:center; }
-    .top-fields { display: grid; grid-template-columns: minmax(240px, 320px) minmax(220px, 1fr); gap: 8px; align-items: end; }
-    .top-actions { display:flex; flex-wrap:nowrap; gap:6px; align-items:end; overflow:auto; padding-bottom:2px; }
-    .field { display: grid; gap: 4px; }
-    .field label { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
-    input, textarea, select, button {
-      font: inherit;
-      border-radius: 10px;
-      border: 1px solid #d6e0eb;
-      padding: 8px 10px;
-      background: #fff;
+
+    .header-fields {
+      display: flex; gap: 6px; align-items: center; flex: 1; min-width: 0;
     }
-    textarea { min-height: 110px; resize: vertical; }
-    .header input, .header button { min-height: 34px; }
-    .header button { padding: 6px 10px; font-size: 0.88rem; }
-    .header input { padding: 7px 10px; }
-    button { cursor: pointer; font-weight: 700; transition: transform 0.08s linear, box-shadow 0.08s linear, background 0.08s linear, outline-color 0.08s linear; }
-    button:hover { transform: translateY(-1px); }
-    .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn-success { background: var(--success); color: #fff; border-color: var(--success); }
-    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
-    .btn-muted { background: #eff5fb; color: var(--primary); border-color: #dce9f8; }
-    .layout { display:grid; gap:16px; }
-    .top-row { display:grid; grid-template-columns: minmax(320px, 360px) minmax(0,1fr); gap:16px; align-items:start; }
-    .left-col, .right-col { display: grid; gap: 16px; align-items:start; }
-    .card { padding: 16px; }
-    .card h2, .card h3 { margin: 0 0 12px; color: var(--primary); }
-    .helper { color: var(--muted); font-size: 0.92rem; }
-    .work-buttons, .mode-buttons, .shot-buttons, .zone-buttons, .player-buttons, .situation-toolbar {
-      display: flex; flex-wrap: wrap; gap: 8px;
+    .h-field { display:flex; flex-direction:column; gap:1px; min-width:0; }
+    .h-label {
+      font-family: var(--ff-h); font-size: 0.58rem; font-weight:700;
+      letter-spacing:.07em; text-transform:uppercase; color:rgba(255,255,255,.50);
+      line-height:1;
     }
-    .tools-card h3 { margin-bottom: 10px; text-align:center; }
-    .work-btn.active, .mode-btn.active, .shot-btn.active, .zone-btn.active, .player-chip.active { outline: 3px solid rgba(21,101,192,0.22); box-shadow: 0 0 0 4px rgba(21,101,192,0.16), 0 8px 16px rgba(10,35,66,0.14); transform: translateY(-1px); }
-    .work-btn { padding: 10px 12px; background: #edf4ff; color: var(--primary); border-color: #d7e6fd; }
-    .situation-count-btn { min-width: 34px; text-align:center; padding: 6px 8px; }
-    .situation-count-btn.active { background: var(--primary); color:#fff; border-color: var(--primary); box-shadow: 0 8px 16px rgba(13,71,161,0.2); }
-    .shot-btn.last-used { outline: 4px solid rgba(255,255,255,0.9); box-shadow: 0 0 0 5px rgba(21,101,192,0.22), 0 10px 18px rgba(10,35,66,0.18); }
-    .mode-btn { background: #f3f7fa; color: var(--ink); }
-    .mode-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .shot-btn, .zone-btn, .player-chip { color: #fff; border: none; }
-    .shot-btn { transition: none !important; }
-    .shot-btn.active { filter: brightness(1.03); }
-    .situation-nav { display:flex; flex-wrap:wrap; gap:8px; margin: 0 0 10px; }
-    .situation-nav-btn { background:#eef5ff; color:var(--primary); border-color:#d7e6fd; }
-    .situation-nav-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); box-shadow: 0 8px 16px rgba(13,71,161,0.18); }
-    .zone-btn { font-weight: 800; font-size: 0.68rem; line-height: 1.1; padding: 7px 8px; text-align: center; min-height: 42px; display:flex; align-items:center; justify-content:center; }
-    .meta-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .terrain-card { padding: 8px 10px 10px; }
-    .terrain-shell { background: linear-gradient(180deg, #fcfeff, #f2f7fc); border-radius: 18px; padding: 6px 8px 4px; }
-    .terrain-topbar { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
-    .legend { display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; }
-    .legend span { background:#edf4ff; color:var(--primary); padding:6px 10px; border-radius:999px; }
-    svg { width: 100%; height: auto; display: block; touch-action: manipulation; }
-    .tools-card { padding: 16px; align-self:start; }
-    .hero-play-btn { background: #ff8f00; color: #fff; border-color: #ff8f00; box-shadow: 0 10px 18px rgba(255,143,0,0.22); font-size: 0.98rem; padding: 10px 14px; }
-    .hero-play-btn.active { background: #2e7d32; border-color: #2e7d32; box-shadow: 0 10px 18px rgba(46,125,50,0.22); }
-    .tool-group { display:grid; gap:10px; margin-bottom:14px; }
-    .tool-group:last-child { margin-bottom:0; }
-    .statusbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:0.92rem; }
-    .status-pill { background:#eef5ff; padding:7px 10px; border-radius:999px; }
-    .import-box { display:grid; gap:10px; }
-    .play-btn.active { background: var(--success); color:#fff; border-color: var(--success); box-shadow: 0 8px 16px rgba(46,125,50,0.2); }
-    .mini { font-size:0.88rem; color:var(--muted); }
-    .footer-note { text-align:right; color:var(--muted); font-size:0.9rem; padding: 2px 6px 6px 0; font-style: italic; }
-    .compact-label { font-size:0.76rem; }
-    .tiny { font-size:0.82rem; color:var(--muted); }
-    .inline { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .number-input { width: 90px; }
-    .separator { height:1px; background:#e6eef7; margin:4px 0; }
-    @media (max-width: 1120px) {
-      .top-fields { grid-template-columns: 1fr 1fr; }
+    .header input {
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 6px; color: #fff;
+      padding: 4px 8px; font: 500 0.80rem var(--ff-b);
+      height: 26px; outline: none; width: 100%;
+      transition: background .15s, border-color .15s;
     }
-    @media (max-width: 900px) and (orientation: portrait) {
-      .top-row { grid-template-columns: 1fr; }
+    .header input::placeholder { color:rgba(255,255,255,.30); }
+    .header input:focus { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.40); }
+
+    .header-actions {
+      display: flex; gap: 4px; align-items: center; flex-shrink: 0;
     }
-    @media (max-width: 860px) {
-      .header-grid { grid-template-columns: 74px minmax(0,1fr); }
-      .icon-slot { min-height: 74px; font-size: 0.8rem; }
-      .top-fields { grid-template-columns: 1fr; }
-      .top-actions { flex-wrap: wrap; }
+    .nb-sit-wrap { display:flex; flex-direction:column; gap:1px; align-items:center; }
+    .nb-sit-label {
+      font-family:var(--ff-h); font-size:0.55rem; font-weight:700;
+      letter-spacing:.06em; text-transform:uppercase; color:rgba(255,255,255,.45);
     }
-    @media (max-width: 780px) and (orientation: portrait) {
-      body { padding: 10px; }
-      .meta-grid { grid-template-columns: 1fr; }
+    .situation-toolbar { display:flex; gap:3px; }
+
+    /* ── BUTTONS global ── */
+    button {
+      font-family: var(--ff-b); font-weight:600; font-size:0.75rem;
+      border:none; border-radius:var(--rs); padding:4px 8px;
+      cursor:pointer; white-space:nowrap;
+      transition: filter .1s, transform .08s;
+      line-height: 1.2;
     }
-    @media (max-width: 980px) and (orientation: landscape) {
-      body { padding: 10px; }
-      .app { gap: 12px; }
-      .top-row { grid-template-columns: minmax(280px, 330px) minmax(0,1fr); gap: 12px; }
-      .tools-card, .terrain-card, .card { padding: 12px; }
-      .tool-group { gap: 8px; margin-bottom: 12px; }
-      .shot-buttons, .zone-buttons, .player-buttons { gap: 6px; }
-      .terrain-shell { padding: 4px 6px 2px; }
+    button:hover  { filter:brightness(1.08); transform:translateY(-1px); }
+    button:active { filter:brightness(.95);  transform:translateY(0); }
+
+    .btn-primary { background:var(--blue2); color:#fff; }
+    .btn-accent  { background:var(--orange); color:#fff; }
+    .btn-success { background:var(--green);  color:#fff; }
+    .btn-danger  { background:var(--red);    color:#fff; }
+    .btn-muted   { background:var(--sky);    color:var(--blue); }
+    .btn-ghost   { background:rgba(255,255,255,.13); color:#fff; border:1px solid rgba(255,255,255,.22); }
+
+    .situation-count-btn {
+      min-width:26px; height:26px; text-align:center; padding:2px 6px;
+      background:rgba(255,255,255,.13); color:rgba(255,255,255,.75);
+      border:1px solid rgba(255,255,255,.22); border-radius:6px;
+      font-family:var(--ff-h); font-size:0.82rem;
+    }
+    .situation-count-btn.active {
+      background:var(--blue2); color:#fff; border-color:var(--blue2);
+    }
+
+    /* ── MAIN AREA ── */
+    .main-area {
+      flex: 1; min-height: 0;
+      display: grid;
+      grid-template-columns: 220px 1fr 230px;
+      gap: 5px;
+    }
+
+    /* ── PANELS ── */
+    .panel {
+      background: var(--surface);
+      border-radius: var(--r);
+      border: 1px solid rgba(10,32,69,.07);
+      box-shadow: 0 2px 10px rgba(10,32,69,.08);
+      overflow: hidden;
+    }
+
+    /* ── LEFT PANEL : outils ── */
+    .tools-panel {
+      display: flex; flex-direction: column;
+      padding: 7px; gap: 5px; overflow-y: auto;
+    }
+    .tools-panel::-webkit-scrollbar { width:3px; }
+    .tools-panel::-webkit-scrollbar-thumb { background:rgba(10,32,69,.15); border-radius:3px; }
+
+    .tool-section { display:flex; flex-direction:column; gap:3px; }
+    .tool-label {
+      font-family:var(--ff-h); font-size:0.60rem; font-weight:800;
+      letter-spacing:.09em; text-transform:uppercase; color:var(--blue);
+      padding-bottom:2px;
+      border-bottom: 1px solid rgba(18,84,204,.12);
+    }
+    .btn-row { display:flex; flex-wrap:wrap; gap:3px; }
+
+    .player-chip {
+      color:#fff; border:2px solid transparent; padding:3px 8px;
+      border-radius:999px; font-size:0.72rem; font-weight:600;
+      transition: all .15s; box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
+    .player-chip.active {
+      outline:2px solid rgba(18,84,204,.40);
+      box-shadow:0 0 0 4px rgba(18,84,204,.15);
+      transform:translateY(-1px);
+    }
+
+    .shot-btn {
+      color:#111; border:none; border-radius:6px;
+      padding:3px 7px; font-size:0.72rem;
+      box-shadow:0 2px 6px rgba(0,0,0,.14);
+    }
+    .shot-btn.active {
+      outline:2px solid rgba(255,255,255,.85);
+      box-shadow:0 0 0 3px rgba(18,84,204,.30);
+    }
+    .shot-btn.last-used {
+      outline:2px solid rgba(255,255,255,.90);
+      box-shadow:0 0 0 3px rgba(18,84,204,.24);
+    }
+
+    .work-btn {
+      background:var(--sky); color:var(--blue);
+      border:1px solid rgba(18,84,204,.18);
+      padding:3px 8px; border-radius:6px; font-size:0.72rem;
+    }
+    .work-btn.active {
+      background:var(--blue); color:#fff;
+      box-shadow:0 2px 8px rgba(18,84,204,.30);
+    }
+
+    .zone-btn {
+      color:#fff; border-radius:6px; font-size:0.68rem; font-weight:700;
+      padding:3px 6px; display:flex; align-items:center; gap:2px;
+    }
+    .zone-btn.active {
+      outline:2px solid rgba(255,255,255,.85);
+      box-shadow:0 0 0 3px rgba(18,84,204,.24);
+      transform:translateY(-1px);
+    }
+
+    .hero-play-btn {
+      background:linear-gradient(135deg,var(--orange),#ff7940);
+      color:#fff; font-size:0.72rem; padding:4px 8px; border-radius:7px;
+      box-shadow:0 3px 10px rgba(240,90,26,.30);
+    }
+    .hero-play-btn.active {
+      background:linear-gradient(135deg,var(--green),#23b267);
+      box-shadow:0 3px 10px rgba(26,143,82,.30);
+    }
+
+    .divider { height:1px; background:rgba(10,32,69,.08); }
+
+    /* ── CENTRE : terrain ── */
+    .terrain-panel {
+      display:flex; flex-direction:column;
+      padding: 5px; gap: 4px;
+    }
+    .situation-nav { display:flex; flex-wrap:wrap; gap:3px; }
+    .situation-nav-btn {
+      background:var(--sky); color:var(--blue);
+      border-radius:6px; padding:2px 9px;
+      font-family:var(--ff-h); font-size:0.70rem; font-weight:700;
+      border:1px solid rgba(18,84,204,.18);
+    }
+    .situation-nav-btn.active {
+      background:var(--blue); color:#fff;
+    }
+    .terrain-shell {
+      flex:1; min-height:0;
+      background:linear-gradient(160deg,#eef4fc,#e2ecf8);
+      border-radius:8px; border:1px solid rgba(10,32,69,.08);
+      display:flex; flex-direction:column;
+      padding:3px;
+    }
+    svg { flex:1; min-height:0; width:100%; height:100%; display:block; touch-action:manipulation; }
+
+    /* ── RIGHT PANEL : dispositif ── */
+    .device-panel {
+      display:flex; flex-direction:column;
+      padding:7px; gap:5px; overflow-y:auto;
+    }
+    .device-panel::-webkit-scrollbar { width:3px; }
+    .device-panel::-webkit-scrollbar-thumb { background:rgba(10,32,69,.15); border-radius:3px; }
+
+    .dev-label {
+      font-family:var(--ff-h); font-size:0.60rem; font-weight:800;
+      letter-spacing:.09em; text-transform:uppercase; color:var(--blue);
+      padding-bottom:2px; border-bottom:1px solid rgba(18,84,204,.12);
+    }
+
+    input[type="text"], textarea, select {
+      font: 500 0.78rem var(--ff-b);
+      border: 1px solid rgba(10,32,69,.14);
+      border-radius: 6px; padding: 4px 8px;
+      background: var(--sf2); color: var(--ink);
+      outline: none; width: 100%;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input[type="text"] { height:26px; }
+    input[type="text"]:focus, textarea:focus {
+      border-color:var(--blue2);
+      box-shadow:0 0 0 2px rgba(26,104,240,.12);
+      background:#fff;
+    }
+    textarea { resize:vertical; min-height:70px; font-size:0.76rem; line-height:1.5; }
+
+    label {
+      font-family:var(--ff-h); font-size:0.60rem; font-weight:700;
+      letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);
+      display:block; margin-bottom:2px;
+    }
+
+    .advice-box {
+      background:linear-gradient(135deg,#f0f5ff,#e8f0fe);
+      border:1px solid rgba(18,84,204,.15);
+      border-radius:7px; padding:6px 8px;
+      color:var(--ink2); font-size:0.72rem; line-height:1.5;
+    }
+
+    .footer-note { display:none; }
+
+    /* ── FALLBACK portrait ── */
+    @media (orientation: portrait) {
+      html, body { height:auto; overflow:auto; }
+      body { padding:8px; gap:8px; flex-direction:column; }
+      .main-area {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        height: auto;
+      }
+      .tools-panel, .device-panel { overflow-y:visible; }
+      svg { height:auto; }
+      .terrain-shell { height:auto; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <section class="panel header">
-      <div class="header-grid">
-        <div class="icon-slot"><img src="logo_app.png" alt="Logo de l'application" /></div>
-        <div class="header-main">
-          <div class="top-fields">
-            <div class="field">
-              <label class="compact-label" for="studentName">Nom et prénom</label>
-              <input id="studentName" type="text" maxlength="30" placeholder="Ex. Quentin Delisle" />
-            </div>
-            <div class="field">
-              <label class="compact-label" for="theme">Thème choisi</label>
-              <input id="theme" type="text" placeholder="Ex. Fixer l’adversaire au fond" />
-            </div>
-          </div>
-          <div class="top-actions">
-            <div class="field" style="min-width:132px; gap:3px;">
-              <label class="compact-label">Nombre de situations</label>
-              <div id="situationCountButtons" class="situation-toolbar"></div>
-            </div>
-            <button id="saveBtn" class="btn-primary">Sauvegarder</button>
-            <button id="importJsonBtn" class="btn-accent">Importer</button>
-            <input id="importJsonInput" type="file" accept="application/json,.json" hidden />
-            <button id="fullscreenBtn" class="btn-muted">Plein écran</button>
-            <button id="resetCurrentBtn" class="btn-danger">Effacer la situation</button>
-            <button id="installBtn" class="btn-success" hidden>Installer</button>
-          </div>
-        </div>
+<div class="header">
+  <div class="header-grid">
+    <div class="icon-slot"><img src="logo_app.png" alt="Logo" /></div>
+
+    <div class="header-fields">
+      <div class="h-field" style="flex:1.2; min-width:110px;">
+        <span class="h-label">Nom &amp; prénom</span>
+        <input id="studentName" type="text" maxlength="30" placeholder="Ex. Quentin Delisle" />
       </div>
-    </section>
-
-    <section class="layout">
-      <div class="top-row">
-        <div class="left-col">
-          <div class="panel tools-card">
-            <h3>Outils de dessin</h3>
-
-            <div class="tool-group">
-              <div class="inline"><strong>1. Placer Joueurs</strong></div>
-              <div class="player-buttons" id="playerButtons"></div>
-            </div>
-
-            <div class="tool-group">
-              <div class="inline"><strong>2. Placer les frappes</strong></div>
-              <div class="shot-buttons" id="shotButtons"></div>
-              <div class="inline">
-                <button id="undoShotBtn" class="btn-muted">Effacer le dernier coup</button>
-                <button id="playShotsBtn" class="hero-play-btn play-btn">🎥 Visualiser les frappes dans l'ordre</button>
-              </div>
-            </div>
-
-            <div class="tool-group">
-              <div class="inline"><strong>3. Placer des zones</strong></div>
-              <div class="zone-buttons" id="zoneButtons"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="right-col">
-          <div class="panel terrain-card">
-            <div class="terrain-shell">
-              <div id="situationNav" class="situation-nav"></div>
-              <svg id="courtSvg" viewBox="0 0 1000 560" aria-label="Terrain de badminton interactif"></svg>
-            </div>
-          </div>
-        </div>
+      <div class="h-field" style="flex:1.5; min-width:130px;">
+        <span class="h-label">Thème</span>
+        <input id="theme" type="text" placeholder="Ex. Fixer l'adversaire au fond" />
       </div>
+    </div>
 
-      <div class="panel card">
-        <h2>Dispositif</h2>
-        <div class="field">
-          <label for="situationTitle">Titre de la situation</label>
-          <input id="situationTitle" type="text" placeholder="Ex. Routine amorti / dégagé" />
-        </div>
-        <div class="separator"></div>
-        <div class="field">
-          <label>Forme de travail choisie</label>
-          <div class="work-buttons" id="workButtons"></div>
-        </div>
-        <div class="field">
-          <label for="deviceText">Explications du dispositif / consignes</label>
-          <textarea id="deviceText" placeholder="Décris le rôle de chacun, la réussite attendue, le critère d’efficacité, les répétitions... " style="min-height:240px"></textarea>
-        </div>
-        <div class="field">
-          <label for="workAdvice">Rappels de la forme de travail</label>
-          <textarea id="workAdvice" readonly style="min-height:60px"></textarea>
-        </div>
+    <div class="header-actions">
+      <div class="nb-sit-wrap">
+        <span class="nb-sit-label">Situations</span>
+        <div id="situationCountButtons" class="situation-toolbar"></div>
       </div>
-    </section>
-
-    <div class="footer-note">By Quentin Delisle</div>
+      <button id="saveBtn"       class="btn-primary">💾</button>
+      <button id="importJsonBtn" class="btn-accent">📂</button>
+      <input  id="importJsonInput" type="file" accept="application/json,.json" hidden />
+      <button id="fullscreenBtn" class="btn-ghost">⛶</button>
+      <button id="resetCurrentBtn" class="btn-danger">🗑</button>
+      <button id="installBtn"    class="btn-success" hidden>⬇</button>
+    </div>
   </div>
+</div>
+
+<div class="main-area">
+
+  <!-- ── COLONNE GAUCHE : outils ── -->
+  <div class="panel tools-panel">
+
+    <div class="tool-section">
+      <div class="tool-label">1 · Joueurs</div>
+      <div class="btn-row" id="playerButtons"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tool-section">
+      <div class="tool-label">2 · Frappes</div>
+      <div class="btn-row" id="shotButtons"></div>
+      <div class="btn-row" style="margin-top:4px;">
+        <button id="undoShotBtn" class="btn-muted">↩ Annuler</button>
+        <button id="playShotsBtn" class="hero-play-btn play-btn">🎥 Visualiser</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tool-section">
+      <div class="tool-label">3 · Zones</div>
+      <div class="btn-row" id="zoneButtons"></div>
+    </div>
+
+  </div>
+
+  <!-- ── CENTRE : terrain ── -->
+  <div class="panel terrain-panel">
+    <div id="situationNav" class="situation-nav"></div>
+    <div class="terrain-shell">
+      <svg id="courtSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" aria-label="Terrain de badminton interactif"></svg>
+    </div>
+  </div>
+
+  <!-- ── COLONNE DROITE : dispositif ── -->
+  <div class="panel device-panel">
+
+    <div class="tool-section">
+      <div class="dev-label">Situation</div>
+      <input id="situationTitle" type="text" placeholder="Ex. Routine amorti / dégagé" />
+    </div>
+
+    <div class="tool-section">
+      <div class="dev-label">Forme de travail</div>
+      <div class="btn-row" id="workButtons"></div>
+    </div>
+
+    <div class="tool-section">
+      <div class="dev-label">Rappels</div>
+      <div id="workAdviceDisplay" class="advice-box"></div>
+      <textarea id="workAdvice" hidden readonly></textarea>
+    </div>
+
+    <div class="tool-section" style="flex:1; display:flex; flex-direction:column; gap:3px;">
+      <div class="dev-label">Consignes &amp; dispositif</div>
+      <textarea id="deviceText" placeholder="Rôles, réussite attendue, répétitions…" style="flex:1; min-height:60px;"></textarea>
+    </div>
+
+  </div>
+
+</div>
 
 <script>
 (() => {
@@ -236,6 +413,7 @@
   const situationCountButtons = document.getElementById('situationCountButtons');
   const deviceText = document.getElementById('deviceText');
   const workAdvice = document.getElementById('workAdvice');
+  const workAdviceDisplay = document.getElementById('workAdviceDisplay');
   const playerButtons = document.getElementById('playerButtons');
   const workButtons = document.getElementById('workButtons');
   const shotButtons = document.getElementById('shotButtons');
@@ -246,44 +424,38 @@
   const works = {
     multivolant: {
       label: 'Multivolant',
-      help: 'Le partenaire prépare plusieurs volants et vise une ou plusieurs zones identifiées dans le terrain adverse. Utile pour travailler un coup précis, un ou plusieurs déplacements, le replacement. Possible de jouer sur l’intensité en enchaînant les lancers plus facilement.'
+      help: `Le partenaire prépare plusieurs volants et vise une ou plusieurs zones identifiées dans le terrain adverse. Utile pour travailler un coup précis, un ou plusieurs déplacements, le replacement. Possible de jouer sur l'intensité en enchaînant les lancers plus facilement.`
     },
     posteFixe: {
       label: 'Poste fixe',
-      help: 'Le partenaire se place dans une zone et lance les volants depuis cette zone pour créer une continuité pour celui qui travaille. Utile pour faire travailler l’atteinte d’une zone précise ou la réalisation d’un coup précis à partir de plusieurs endroits du terrain. Peut également servir pour améliorer le déplacement de celui qui travaille.'
+      help: `Le partenaire se place dans une zone et lance les volants depuis cette zone pour créer une continuité pour celui qui travaille. Utile pour faire travailler l'atteinte d'une zone précise ou la réalisation d'un coup précis à partir de plusieurs endroits du terrain. Peut également servir pour améliorer le déplacement de celui qui travaille.`
     },
     routine: {
       label: 'Routine',
-      help: 'Les deux joueurs réalisent un enchaînement de coups sans variation. Utile pour améliorer son déplacement en l’anticipant car le prochain coup est déjà prévu. La routine peut être sur 2, 3, 4 ou 5 frappes consécutives.'
+      help: `Les deux joueurs réalisent un enchaînement de coups sans variation. Utile pour améliorer son déplacement en l'anticipant car le prochain coup est déjà prévu. La routine peut être sur 2, 3, 4 ou 5 frappes consécutives.`
     },
     matchTheme: {
       label: 'Match à thème',
-      help: 'Opposition au cours de laquelle les joueurs doivent valoriser une zone, un coup, un enchaînement de coup qui apporte un bonus au score. On peut envisager du 2c1 ou du 1c1.'
+      help: `Opposition au cours de laquelle les joueurs doivent valoriser une zone, un coup, un enchaînement de coup qui apporte un bonus au score. On peut envisager du 2c1 ou du 1c1.`
     }
   };
 
   const shots = {
-    service: { label:'Service', color:'#4f5b62', kind:'service' },
-    smash: { label:'Smash', color:'#7CFC00', kind:'line' },
-    amorti: { label:'Amorti', color:'#ec6aa7', kind:'drop' },
-    degage: { label:'Dégagé', color:'#e53935', kind:'clear' },
+    service:      { label:'Service',       color:'#4f5b62', kind:'service' },
+    smash:        { label:'Smash',         color:'#7CFC00', kind:'line' },
+    amorti:       { label:'Amorti',        color:'#ec6aa7', kind:'drop' },
+    degage:       { label:'Dégagé',        color:'#e53935', kind:'clear' },
     contreAmorti: { label:'Contre amorti', color:'#fdd835', kind:'counterdrop' },
-    drive: { label:'Drive', color:'#fb8c00', kind:'drive' },
-    kill: { label:'Kill', color:'#111111', kind:'kill' },
-    lob: { label:'Lob', color:'#8e24aa', kind:'lob' }
+    drive:        { label:'Drive',         color:'#fb8c00', kind:'drive' },
+    kill:         { label:'Kill',          color:'#111111', kind:'kill' },
+    lob:          { label:'Lob',           color:'#8e24aa', kind:'lob' }
   };
 
   const zoneTypes = {
-    autorisee: { label:'Zone autorisée', fill:'rgba(46,125,50,0.28)', stroke:'#2e7d32', text:'OK', textColor:'#1b5e20', icon:'✓' },
-    interdite: { label:'Zone interdite', fill:'rgba(244,67,54,0.24)', stroke:'#c62828', text:'⛔', textColor:'#b71c1c', icon:'⛔' },
-    bonus: { label:'Bonus', fill:'rgba(201,151,0,0.26)', stroke:'#c99700', text:'BONUS', textColor:'#b8860b', icon:'★' },
-    malus: { label:'Malus', fill:'rgba(255,82,82,0.20)', stroke:'#d32f2f', text:'MALUS', textColor:'#c62828', icon:'−' }
-  };
-
-  const modes = {
-    placement: 'Placer Joueurs',
-    frappe: 'Indiquer une frappe',
-    zone: 'Indiquer une zone'
+    autorisee: { label:'Zone autorisée', fill:'rgba(46,125,50,0.28)',  stroke:'#2e7d32', text:'OK',    textColor:'#1b5e20', icon:'✓' },
+    interdite: { label:'Zone interdite', fill:'rgba(244,67,54,0.24)',  stroke:'#c62828', text:'⛔',    textColor:'#b71c1c', icon:'⛔' },
+    bonus:     { label:'Bonus',          fill:'rgba(201,151,0,0.26)',  stroke:'#c99700', text:'BONUS', textColor:'#b8860b', icon:'★' },
+    malus:     { label:'Malus',          fill:'rgba(255,82,82,0.20)',  stroke:'#d32f2f', text:'MALUS', textColor:'#c62828', icon:'−' }
   };
 
   const geometry = {
@@ -319,18 +491,16 @@
       workKey: 'multivolant',
       deviceText: '',
       players: [
-        { id:0, label:'Joueur vert', color:'#4caf50', zoneId:null },
-        { id:1, label:'Partenaire', color:'#e53935', zoneId:null },
-        { id:2, label:'Partenaire 2', color:'#e53935', zoneId:null }
+        { id:0, label:'Joueur vert',   color:'#4caf50', zoneId:null },
+        { id:1, label:'Partenaire',    color:'#e53935', zoneId:null },
+        { id:2, label:'Partenaire 2',  color:'#e53935', zoneId:null }
       ],
       shots: [],
       zoneAnnotations: []
     };
   }
 
-  function getSituation() {
-    return state.situations[state.currentSituationIndex];
-  }
+  function getSituation() { return state.situations[state.currentSituationIndex]; }
 
   function getStudentFirstName() {
     const raw = (state.meta.studentName || studentName.value || '').trim();
@@ -352,79 +522,74 @@
       const raw = localStorage.getItem(storageKey);
       const parsed = raw ? JSON.parse(raw) : null;
       if (parsed?.ui && !parsed.ui.lastPlacedShot) parsed.ui.lastPlacedShot = parsed.ui.activeShot || 'service';
-      if (parsed?.ui && parsed.ui.isPlayingShots === undefined) { parsed.ui.isPlayingShots = false; parsed.ui.playIndex = -1; }
       return parsed;
-    } catch {
-      return null;
-    }
-  }
-
-  function syncMetaCounts() {
-    state.meta.studentName = studentName.value;
-    state.meta.theme = theme.value;
+    } catch { return null; }
   }
 
   function saveState() {
-    localStorage.setItem(storageKey, JSON.stringify(state));
-    syncMetaCounts();
-  }
-
-  function resetUiTransient() {
-    state.ui.pendingShotStart = null;
-    state.ui.flashLabels = [];
-    state.ui.selectedAnnotation = null;
+    state.meta.studentName = studentName.value;
+    state.meta.theme = theme.value;
+    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch {}
   }
 
   function syncFormFromState() {
-    const s = getSituation();
     studentName.value = state.meta.studentName || '';
-    theme.value = state.meta.theme || '';
+    theme.value       = state.meta.theme || '';
+    const s = getSituation();
     situationTitle.value = s.title || '';
-    deviceText.value = s.deviceText || '';
-    workAdvice.value = works[s.workKey].help;
+    deviceText.value     = s.deviceText || '';
+    workAdvice.value     = works[s.workKey]?.help || '';
+    if (workAdviceDisplay) workAdviceDisplay.textContent = works[s.workKey]?.help || '';
   }
 
+  function syncMetaCounts() {
+    const s = getSituation();
+    s.title      = situationTitle.value;
+    s.deviceText = deviceText.value;
+  }
+
+  function resetUiTransient() {
+    state.ui.pendingShotStart  = null;
+    state.ui.flashLabels       = [];
+    state.ui.selectedAnnotation = null;
+  }
+
+  /* ── ZONE BUILDER ── */
   function buildZones() {
+    const zones = [];
     const [x0,x1,x2,xNet,x3,x4,x5] = geometry.x;
     const [y0,y1,y2,y3,y4] = geometry.y;
-    const zones = [];
 
-    function addGrid(idPrefix, xA, xB, yA, yB, rows, cols, side, section) {
-      const w = (xB - xA) / cols;
-      const h = (yB - yA) / rows;
-      for (let r=0; r<rows; r++) {
-        for (let c=0; c<cols; c++) {
-          const x = xA + c * w;
-          const y = yA + r * h;
+    function addGrid(prefix, xa, xb, ya, yb, cols, rows, side, region) {
+      const cellW = (xb - xa) / cols;
+      const cellH = (yb - ya) / rows;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const zx = xa + c * cellW;
+          const zy = ya + r * cellH;
           zones.push({
-            id: `${idPrefix}-${r}-${c}`,
-            x, y, w, h,
-            cx: x + w/2,
-            cy: y + h/2,
-            side, section
+            id: `${prefix}-${r}-${c}`,
+            x: zx, y: zy, w: cellW, h: cellH,
+            cx: zx + cellW / 2, cy: zy + cellH / 2,
+            side, region
           });
         }
       }
     }
 
-    addGrid('bg-topalley', x0, x1, y0, y1, 1, 1, 'left', 'back');
-    addGrid('bg-up', x0, x1, y1, y2, 4, 1, 'left', 'back');
-    addGrid('bg-down', x0, x1, y2, y3, 4, 1, 'left', 'back');
-    addGrid('bg-botalley', x0, x1, y3, y4, 1, 1, 'left', 'back');
-
-    addGrid('bd-topalley', x4, x5, y0, y1, 1, 1, 'right', 'back');
-    addGrid('bd-up', x4, x5, y1, y2, 4, 1, 'right', 'back');
-    addGrid('bd-down', x4, x5, y2, y3, 4, 1, 'right', 'back');
+    addGrid('bg-left',  x0, x1, y0, y4, 1, 3, 'left',  'alley');
+    addGrid('bg-right', x4, x5, y0, y4, 1, 3, 'right', 'alley');
+    addGrid('bg-botalley', x1, x2, y3, y4, 1, 1, 'left',  'back');
     addGrid('bd-botalley', x4, x5, y3, y4, 1, 1, 'right', 'back');
 
-    addGrid('cg-up', x1, x2, y1, y2, 4, 3, 'left', 'central-high');
-    addGrid('cg-down', x1, x2, y2, y3, 4, 3, 'left', 'central-low');
-    addGrid('cd-up', x3, x4, y1, y2, 4, 3, 'right', 'central-high');
+    addGrid('cg-up',   x1, x2, y1, y2, 4, 3, 'left',  'central-high');
+    addGrid('cg-down', x1, x2, y2, y3, 4, 3, 'left',  'central-low');
+    addGrid('cd-up',   x3, x4, y1, y2, 4, 3, 'right', 'central-high');
     addGrid('cd-down', x3, x4, y2, y3, 4, 3, 'right', 'central-low');
 
-    addGrid('ag-up', x2, xNet, y1, y2, 4, 2, 'left', 'front-high');
-    addGrid('ag-down', x2, xNet, y2, y3, 4, 2, 'left', 'front-low');
-    addGrid('ad-up', xNet, x3, y1, y2, 4, 2, 'right', 'front-high');
+    addGrid('ag-up',   x2, xNet, y1, y2, 4, 2, 'left',  'front-high');
+    addGrid('ag-down', x2, xNet, y2, y3, 4, 2, 'left',  'front-low');
+    addGrid('ad-up',   xNet, x3, y1, y2, 4, 2, 'right', 'front-high');
     addGrid('ad-down', xNet, x3, y2, y3, 4, 2, 'right', 'front-low');
 
     return zones;
@@ -433,7 +598,7 @@
   const zones = buildZones();
   const zoneById = Object.fromEntries(zones.map(z => [z.id, z]));
   const sideCenters = {
-    left: { x: (geometry.x[0] + geometry.x[3]) / 2, y: (geometry.y[0] + geometry.y[4]) / 2 },
+    left:  { x: (geometry.x[0] + geometry.x[3]) / 2, y: (geometry.y[0] + geometry.y[4]) / 2 },
     right: { x: (geometry.x[3] + geometry.x[6]) / 2, y: (geometry.y[0] + geometry.y[4]) / 2 }
   };
 
@@ -441,6 +606,7 @@
     return zoneById[a] && zoneById[b] && zoneById[a].side !== zoneById[b].side;
   }
 
+  /* ── RENDER BUTTONS ── */
   function renderSituationNav() {
     situationNav.innerHTML = '';
     state.situations.forEach((_, idx) => {
@@ -460,40 +626,45 @@
   }
 
   function renderButtons() {
+    /* Situation count */
     situationCountButtons.innerHTML = '';
     [1,2,3].forEach(count => {
       const b = document.createElement('button');
-      b.className = 'btn-muted situation-count-btn' + (state.situations.length === count ? ' active' : '');
+      b.className = 'situation-count-btn' + (state.situations.length === count ? ' active' : '');
       b.textContent = String(count);
       b.onpointerdown = (e) => {
         e.preventDefault();
         const current = state.situations.length;
-        if (count > current) {
-          for (let i=current; i<count; i++) state.situations.push(createSituation());
-        } else if (count < current) {
+        if (count > current) { for (let i=current; i<count; i++) state.situations.push(createSituation()); }
+        else if (count < current) {
           state.situations = state.situations.slice(0, count);
           if (state.currentSituationIndex >= state.situations.length) state.currentSituationIndex = state.situations.length - 1;
         }
         if (state.currentSituationIndex < 0) state.currentSituationIndex = 0;
-        stopPlayback(false);
-        resetUiTransient();
-        syncFormFromState();
-        saveState();
-        renderAll();
+        stopPlayback(false); resetUiTransient(); syncFormFromState(); saveState(); renderAll();
       };
       situationCountButtons.appendChild(b);
     });
 
     renderSituationNav();
 
+    /* Work */
     workButtons.innerHTML = '';
     Object.entries(works).forEach(([key, val]) => {
       const b = document.createElement('button');
       b.className = 'work-btn' + (getSituation().workKey === key ? ' active' : '');
       b.textContent = val.label;
-      b.onpointerdown = (e) => { e.preventDefault(); getSituation().workKey = key; workAdvice.value = val.help; stopPlayback(false); saveState(); renderAll(); };
+      b.onpointerdown = (e) => {
+        e.preventDefault();
+        getSituation().workKey = key;
+        workAdvice.value = val.help;
+        if (workAdviceDisplay) workAdviceDisplay.textContent = val.help;
+        stopPlayback(false); saveState(); renderAll();
+      };
       workButtons.appendChild(b);
     });
+
+    /* Players */
     playerButtons.innerHTML = '';
     getSituation().players.forEach((player, idx) => {
       const b = document.createElement('button');
@@ -504,13 +675,14 @@
       playerButtons.appendChild(b);
     });
 
+    /* Shots */
     shotButtons.innerHTML = '';
     Object.entries(shots).forEach(([key, shot]) => {
       const b = document.createElement('button');
       b.className = 'shot-btn' + (state.ui.activeShot === key ? ' active' : '') + (state.ui.lastPlacedShot === key ? ' last-used' : '');
       b.textContent = shot.label;
       b.style.background = shot.color;
-      b.style.color = ['kill', 'service'].includes(key) ? '#fff' : '#10243c';
+      b.style.color = ['kill','service'].includes(key) ? '#fff' : '#10243c';
       b.onpointerdown = (e) => {
         e.preventDefault();
         state.ui.activeShot = key;
@@ -523,12 +695,14 @@
       shotButtons.appendChild(b);
     });
 
+    /* Play btn */
     const playBtn = document.getElementById('playShotsBtn');
     if (playBtn) {
       playBtn.classList.toggle('active', !!playback.active);
-      playBtn.textContent = playback.active ? '🎥 Arrêter la visualisation' : "🎥 Visualiser les frappes dans l'ordre";
+      playBtn.textContent = playback.active ? '🎥 Arrêter la visualisation' : "🎥 Visualiser les frappes";
     }
 
+    /* Zones */
     zoneButtons.innerHTML = '';
     Object.entries(zoneTypes).forEach(([key, zoneType]) => {
       const b = document.createElement('button');
@@ -542,6 +716,7 @@
     });
   }
 
+  /* ── SVG HELPERS ── */
   function createSvgEl(tag, attrs = {}) {
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
@@ -553,29 +728,29 @@
     const [x0,x1,x2,xNet,x3,x4,x5] = geometry.x;
     const [y0,y1,y2,y3,y4] = geometry.y;
 
-    const bg = createSvgEl('rect', { x: 30, y: 30, width: 940, height: 500, rx: 20, fill: '#f7fbff' });
-    const court = createSvgEl('rect', { x: x0, y: y0, width: x5 - x0, height: y4 - y0, rx: 10, fill: '#1976d2' });
+    const bg    = createSvgEl('rect', { x:30, y:30, width:940, height:500, rx:20, fill:'#f0f5fc' });
+    const court = createSvgEl('rect', { x:x0, y:y0, width:x5-x0, height:y4-y0, rx:10, fill:'#1976d2' });
     svg.appendChild(bg);
     svg.appendChild(court);
 
-    const lineGroup = createSvgEl('g', { stroke: '#111111', 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round' });
+    const lineGroup = createSvgEl('g', { stroke:'#111111', 'stroke-width':4, fill:'none', 'stroke-linecap':'round' });
     [
       [x0,y0,x5,y0],[x0,y4,x5,y4],[x0,y0,x0,y4],[x5,y0,x5,y4],
       [x1,y0,x1,y4],[x2,y0,x2,y4],[xNet,y0,xNet,y4],[x3,y0,x3,y4],[x4,y0,x4,y4],
       [x0,y1,x5,y1],[x0,y3,x5,y3],
       [x0,y2,x2,y2],[x3,y2,x5,y2]
-    ].forEach(([xa,ya,xb,yb]) => lineGroup.appendChild(createSvgEl('line', { x1:xa, y1:ya, x2:xb, y2:yb })));
+    ].forEach(([xa,ya,xb,yb]) => lineGroup.appendChild(createSvgEl('line',{x1:xa,y1:ya,x2:xb,y2:yb})));
     svg.appendChild(lineGroup);
 
-    const netGroup = createSvgEl('g');
-    const netBand = createSvgEl('rect', { x:xNet-4, y:y0-10, width:8, height:(y4-y0)+20, rx:2, fill:'rgba(120,130,140,0.14)', stroke:'rgba(80,90,100,0.45)', 'stroke-width':1 });
+    const netGroup  = createSvgEl('g');
+    const netBand   = createSvgEl('rect', { x:xNet-4, y:y0-10, width:8, height:(y4-y0)+20, rx:2, fill:'rgba(120,130,140,0.14)', stroke:'rgba(80,90,100,0.45)', 'stroke-width':1 });
     netGroup.appendChild(netBand);
-    for (let hy = y0 - 6; hy <= y4 + 6; hy += 12) {
-      netGroup.appendChild(createSvgEl('line', { x1:xNet-4, y1:hy, x2:xNet+4, y2:hy+6, stroke:'rgba(120,130,140,0.55)', 'stroke-width':1 }));
-      netGroup.appendChild(createSvgEl('line', { x1:xNet+4, y1:hy, x2:xNet-4, y2:hy+6, stroke:'rgba(180,190,198,0.35)', 'stroke-width':1 }));
+    for (let hy = y0-6; hy <= y4+6; hy += 12) {
+      netGroup.appendChild(createSvgEl('line',{x1:xNet-4,y1:hy,x2:xNet+4,y2:hy+6,stroke:'rgba(120,130,140,0.55)','stroke-width':1}));
+      netGroup.appendChild(createSvgEl('line',{x1:xNet+4,y1:hy,x2:xNet-4,y2:hy+6,stroke:'rgba(180,190,198,0.35)','stroke-width':1}));
     }
-    const net = createSvgEl('line', { x1:xNet, y1:y0-12, x2:xNet, y2:y4+12, stroke:'#6b7680', 'stroke-width':1.6 });
-    const topPost = createSvgEl('circle', { cx:xNet, cy:y0-16, r:4, fill:'#ffffff', stroke:'#263238', 'stroke-width':2 });
+    const net        = createSvgEl('line', { x1:xNet, y1:y0-12, x2:xNet, y2:y4+12, stroke:'#6b7680', 'stroke-width':1.6 });
+    const topPost    = createSvgEl('circle', { cx:xNet, cy:y0-16, r:4, fill:'#ffffff', stroke:'#263238', 'stroke-width':2 });
     const bottomPost = createSvgEl('circle', { cx:xNet, cy:y4+16, r:4, fill:'#ffffff', stroke:'#263238', 'stroke-width':2 });
     svg.appendChild(netGroup);
     svg.appendChild(net);
@@ -591,24 +766,16 @@
       const t = zoneTypes[ann.type];
       if (!z || !t) return;
       const rect = createSvgEl('rect', {
-        x: z.x + 3, y: z.y + 3, width: Math.max(0, z.w - 6), height: Math.max(0, z.h - 6), rx: 6,
-        fill: t.fill, stroke: t.stroke, 'stroke-width': state.ui.selectedAnnotation === annIndex ? 4 : 2
+        x:z.x+3, y:z.y+3, width:Math.max(0,z.w-6), height:Math.max(0,z.h-6), rx:6,
+        fill:t.fill, stroke:t.stroke, 'stroke-width': state.ui.selectedAnnotation === annIndex ? 4 : 2
       });
       rect.style.cursor = 'pointer';
-      rect.addEventListener('click', (e) => {
-        e.stopPropagation();
-        state.ui.selectedAnnotation = annIndex;
-        renderAll();
-      });
+      rect.addEventListener('click', (e) => { e.stopPropagation(); state.ui.selectedAnnotation = annIndex; renderAll(); });
       g.appendChild(rect);
-
-      const boxW = Math.max(0, z.w - 12);
-      const boxH = Math.max(0, z.h - 12);
-      const fs = Math.max(10, Math.min(16, boxW / (ann.type === 'autorisee' ? 7.2 : 5.8), boxH * 0.34));
-      const text = createSvgEl('text', {
-        x: z.cx, y: z.cy + fs * 0.30, 'text-anchor': 'middle', 'font-size': fs,
-        'font-weight': 900, fill: t.textColor, 'pointer-events': 'none'
-      });
+      const boxW = Math.max(0, z.w-12);
+      const boxH = Math.max(0, z.h-12);
+      const fs = Math.max(10, Math.min(16, boxW/(ann.type==='autorisee'?7.2:5.8), boxH*0.34));
+      const text = createSvgEl('text', { x:z.cx, y:z.cy+fs*0.30, 'text-anchor':'middle', 'font-size':fs, 'font-weight':900, fill:t.textColor, 'pointer-events':'none' });
       text.textContent = t.text;
       g.appendChild(text);
     });
@@ -621,47 +788,34 @@
     const distance = Math.hypot(dx, dy);
     const topY = geometry.y[0] + 6;
     const peakY = (rise) => Math.max(topY, Math.min(start.cy, end.cy) - rise);
-
     switch (shots[shotKey].kind) {
       case 'line':
       case 'drive':
         return `M ${start.cx} ${start.cy} L ${end.cx} ${end.cy}`;
       case 'drop': {
-        const rise = Math.max(22, Math.min(44, distance * 0.10 + 8));
-        const py = peakY(rise);
-        const qx = start.cx + dx * 0.5;
-        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+        const rise = Math.max(22, Math.min(44, distance*0.10+8));
+        return `M ${start.cx} ${start.cy} Q ${start.cx+dx*0.5} ${peakY(rise)}, ${end.cx} ${end.cy}`;
       }
       case 'clear': {
-        const rise = Math.max(190, Math.min(275, distance * 0.46 + 105));
-        const py = peakY(rise);
-        const qx = start.cx + dx * 0.5;
-        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+        const rise = Math.max(190, Math.min(275, distance*0.46+105));
+        return `M ${start.cx} ${start.cy} Q ${start.cx+dx*0.5} ${peakY(rise)}, ${end.cx} ${end.cy}`;
       }
       case 'counterdrop': {
-        const rise = Math.max(24, Math.min(52, distance * 0.09 + 8));
-        const py = peakY(rise);
-        const qx = start.cx + dx * 0.5;
-        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+        const rise = Math.max(24, Math.min(52, distance*0.09+8));
+        return `M ${start.cx} ${start.cy} Q ${start.cx+dx*0.5} ${peakY(rise)}, ${end.cx} ${end.cy}`;
       }
       case 'kill': {
-        const c1x = start.cx + dx * 0.18;
-        const c1y = start.cy + dy * 0.10 - 10;
-        const c2x = start.cx + dx * 0.72;
-        const c2y = start.cy + dy * 0.84;
+        const c1x = start.cx+dx*0.18, c1y = start.cy+dy*0.10-10;
+        const c2x = start.cx+dx*0.72, c2y = start.cy+dy*0.84;
         return `M ${start.cx} ${start.cy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${end.cx} ${end.cy}`;
       }
       case 'lob': {
-        const rise = Math.max(195, Math.min(280, distance * 0.45 + 110));
-        const py = peakY(rise);
-        const qx = start.cx + dx * 0.5;
-        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+        const rise = Math.max(195, Math.min(280, distance*0.45+110));
+        return `M ${start.cx} ${start.cy} Q ${start.cx+dx*0.5} ${peakY(rise)}, ${end.cx} ${end.cy}`;
       }
       case 'service': {
-        const rise = Math.max(58, Math.min(108, distance * 0.18 + 36));
-        const py = peakY(rise);
-        const qx = start.cx + dx * 0.5;
-        return `M ${start.cx} ${start.cy} Q ${qx} ${py}, ${end.cx} ${end.cy}`;
+        const rise = Math.max(58, Math.min(108, distance*0.18+36));
+        return `M ${start.cx} ${start.cy} Q ${start.cx+dx*0.5} ${peakY(rise)}, ${end.cx} ${end.cy}`;
       }
       default:
         return `M ${start.cx} ${start.cy} L ${end.cx} ${end.cy}`;
@@ -672,28 +826,23 @@
     const defs = createSvgEl('defs');
     Object.entries(shots).forEach(([key,shot]) => {
       const marker = createSvgEl('marker', { id:'arrow-'+key, viewBox:'0 0 10 10', refX:'8.4', refY:'5', markerWidth:'3.9', markerHeight:'3.9', orient:'auto-start-reverse' });
-      marker.appendChild(createSvgEl('path', { d:'M 0 0 L 10 5 L 0 10 z', fill: shot.color, stroke: shot.color }));
+      marker.appendChild(createSvgEl('path', { d:'M 0 0 L 10 5 L 0 10 z', fill:shot.color, stroke:shot.color }));
       defs.appendChild(marker);
     });
     return defs;
   }
 
   function stopPlayback(render = false) {
-    playback.active = false;
-    playback.shotIndex = -1;
-    playback.progress = 0;
-    playback.playerPositions = [];
-    playback.fromPositions = [];
-    playback.toPositions = [];
+    playback.active = false; playback.shotIndex = -1; playback.progress = 0;
+    playback.playerPositions = []; playback.fromPositions = []; playback.toPositions = [];
     if (playback.rafId) cancelAnimationFrame(playback.rafId);
     playback.rafId = null;
-    state.ui.isPlayingShots = false;
-    state.ui.playIndex = -1;
+    state.ui.isPlayingShots = false; state.ui.playIndex = -1;
     if (render) renderAll();
   }
 
   function getPathMetrics(pathD, progress = 1) {
-    const temp = createSvgEl('path', { d: pathD, fill: 'none', stroke: 'none' });
+    const temp = createSvgEl('path', { d:pathD, fill:'none', stroke:'none' });
     svg.appendChild(temp);
     const total = temp.getTotalLength();
     const point = temp.getPointAtLength(Math.max(0.001, total * Math.max(0, Math.min(1, progress))));
@@ -703,37 +852,27 @@
 
   function createShotPathElements(pathD, shotObj, shotDef, numberText, faded = false) {
     const metrics = getPathMetrics(pathD, 1);
-    const gap = 22;
-    const mid = metrics.total / 2;
-    const before = Math.max(0, mid - gap / 2);
-    const after = Math.min(metrics.total, mid + gap / 2);
-
+    const gap = 22, mid = metrics.total/2;
+    const before = Math.max(0, mid-gap/2);
+    const after  = Math.min(metrics.total, mid+gap/2);
     const makePath = (dasharray, dashoffset, withMarker) => {
       const path = createSvgEl('path', {
-        d: pathD,
-        fill: 'none',
-        stroke: shotDef.color,
-        color: shotDef.color,
-        'stroke-width': shotObj.type === 'kill' ? 4.5 : 3.6,
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round',
-        opacity: faded ? 0.22 : 0.94,
-        'stroke-dasharray': dasharray,
-        'stroke-dashoffset': dashoffset
+        d:pathD, fill:'none', stroke:shotDef.color, color:shotDef.color,
+        'stroke-width': shotObj.type==='kill'?4.5:3.6,
+        'stroke-linecap':'round','stroke-linejoin':'round',
+        opacity: faded?0.22:0.94,
+        'stroke-dasharray':dasharray,'stroke-dashoffset':dashoffset
       });
-      if (withMarker) path.setAttribute('marker-end', 'url(#arrow-' + shotObj.type + ')');
+      if (withMarker) path.setAttribute('marker-end','url(#arrow-'+shotObj.type+')');
       path.style.filter = 'drop-shadow(0 1px 0 rgba(255,255,255,0.35))';
       return path;
     };
-
-    const first = makePath(`${before} ${Math.max(0, metrics.total - before)}`, '0', false);
-    const secondVisible = Math.max(0, metrics.total - after);
-    const second = makePath(`${secondVisible} ${after}`, String(metrics.total - after), true);
+    const first = makePath(`${before} ${Math.max(0, metrics.total-before)}`,'0',false);
+    const secondVisible = Math.max(0, metrics.total-after);
+    const second = makePath(`${secondVisible} ${after}`, String(metrics.total-after), true);
     const midpoint = getPathMetrics(pathD, 0.5).point;
-    const labelBg = createSvgEl('circle', { cx: midpoint.x, cy: midpoint.y, r: 12, fill: '#ffffff', opacity: 0.96 });
-    const label = createSvgEl('text', {
-      x: midpoint.x, y: midpoint.y + 5, fill: shotDef.color, 'font-size': 17, 'font-weight': 900, 'text-anchor': 'middle', opacity: faded ? 0.7 : 1
-    });
+    const labelBg = createSvgEl('circle', { cx:midpoint.x, cy:midpoint.y, r:12, fill:'#ffffff', opacity:0.96 });
+    const label = createSvgEl('text', { x:midpoint.x, y:midpoint.y+5, fill:shotDef.color, 'font-size':17, 'font-weight':900, 'text-anchor':'middle', opacity:faded?0.7:1 });
     label.textContent = numberText;
     return { first, second, labelBg, label };
   }
@@ -743,18 +882,15 @@
     if (!playback.active || playback.shotIndex < 0) {
       return s.players.map(player => {
         const z = player.zoneId && zoneById[player.zoneId];
-        return z ? { x: z.cx, y: z.cy } : null;
+        return z ? { x:z.cx, y:z.cy } : null;
       });
     }
     return s.players.map((player, idx) => {
-      const base = playback.fromPositions[idx] || playback.playerPositions[idx] || null;
+      const base   = playback.fromPositions[idx] || playback.playerPositions[idx] || null;
       const target = playback.toPositions[idx] || base;
       if (!base) return null;
       const t = playback.progress;
-      return {
-        x: base.x + (target.x - base.x) * t,
-        y: base.y + (target.y - base.y) * t
-      };
+      return { x: base.x+(target.x-base.x)*t, y: base.y+(target.y-base.y)*t };
     });
   }
 
@@ -764,158 +900,232 @@
     const g = createSvgEl('g');
     let shuttlePoint = null;
     s.shots.forEach((shotObj, idx) => {
-      const start = zoneById[shotObj.startZoneId];
-      const end = zoneById[shotObj.endZoneId];
+      const start = zoneById[shotObj.startZoneId], end = zoneById[shotObj.endZoneId];
       if (!start || !end) return;
       const shotDef = shots[shotObj.type];
       const pathD = pathForShot(shotObj.type, start, end);
-      const isPast = playback.active && idx < playback.shotIndex;
+      const isPast    = playback.active && idx < playback.shotIndex;
       const isCurrent = playback.active && idx === playback.shotIndex;
-      const isFuture = playback.active && idx > playback.shotIndex;
+      const isFuture  = playback.active && idx > playback.shotIndex;
       if (isFuture) return;
-
       if (!playback.active || isPast) {
-        const split = createShotPathElements(pathD, shotObj, shotDef, String(idx + 1), isPast && playback.active);
-        g.appendChild(split.first);
-        g.appendChild(split.second);
-        g.appendChild(split.labelBg);
-        g.appendChild(split.label);
+        const split = createShotPathElements(pathD, shotObj, shotDef, String(idx+1), isPast && playback.active);
+        g.appendChild(split.first); g.appendChild(split.second);
+        g.appendChild(split.labelBg); g.appendChild(split.label);
       } else if (isCurrent) {
-        const path = createSvgEl('path', {
-          d: pathD, fill: 'none', stroke: shotDef.color, color: shotDef.color,
-          'stroke-width': shotObj.type === 'kill' ? 4.5 : 3.6,
-          'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0.98
-        });
+        const path = createSvgEl('path', { d:pathD, fill:'none', stroke:shotDef.color, color:shotDef.color, 'stroke-width':shotObj.type==='kill'?4.5:3.6, 'stroke-linecap':'round','stroke-linejoin':'round', opacity:0.98 });
         const metrics = getPathMetrics(pathD, playback.progress);
         path.setAttribute('stroke-dasharray', String(metrics.total));
-        path.setAttribute('stroke-dashoffset', String(metrics.total * (1 - playback.progress)));
+        path.setAttribute('stroke-dashoffset', String(metrics.total*(1-playback.progress)));
         path.style.filter = 'drop-shadow(0 1px 0 rgba(255,255,255,0.35))';
         g.appendChild(path);
         const midpoint = getPathMetrics(pathD, 0.5).point;
-        const labelBg = createSvgEl('circle', { cx: midpoint.x, cy: midpoint.y, r: 12, fill: '#ffffff', opacity: 0.96 });
-        const label = createSvgEl('text', { x: midpoint.x, y: midpoint.y + 5, fill: shotDef.color, 'font-size': 17, 'font-weight': 900, 'text-anchor': 'middle' });
-        label.textContent = String(idx + 1);
-        g.appendChild(labelBg);
-        g.appendChild(label);
-        shuttlePoint = { x: metrics.point.x, y: metrics.point.y, color: shotDef.color };
+        const labelBg = createSvgEl('circle',{ cx:midpoint.x, cy:midpoint.y, r:12, fill:'#ffffff', opacity:0.96 });
+        const label = createSvgEl('text',{ x:midpoint.x, y:midpoint.y+5, fill:shotDef.color, 'font-size':17, 'font-weight':900, 'text-anchor':'middle' });
+        label.textContent = String(idx+1);
+        g.appendChild(labelBg); g.appendChild(label);
+        shuttlePoint = { x:metrics.point.x, y:metrics.point.y, color:shotDef.color };
       }
     });
-    if (shuttlePoint) {
-      drawShuttlecock(g, shuttlePoint.x, shuttlePoint.y, -20, 0.9);
-    }
+    if (shuttlePoint) drawShuttlecock(g, shuttlePoint.x, shuttlePoint.y, -20, 0.9);
     svg.appendChild(g);
   }
 
-
-  
   function drawShuttlecock(parent, x, y, angleDeg, scale = 1) {
-    const g = createSvgEl('g', { transform: `translate(${x} ${y}) rotate(${angleDeg}) scale(${scale})` });
-    const cork = createSvgEl('ellipse', { cx: 0, cy: 0, rx: 6, ry: 4.6, fill: '#fff7e6', stroke: '#5d4037', 'stroke-width': 1.4 });
-    const band = createSvgEl('path', { d: 'M -4 -1 Q 0 1 4 -1', fill: 'none', stroke: '#8d6e63', 'stroke-width': 1 });
-    const featherFill = createSvgEl('path', { d: 'M 4 -1 L 16 -9 L 15 -4 L 18 0 L 15 4 L 16 9 L 4 1 Z', fill: '#ffffff', stroke: '#546e7a', 'stroke-width': 1.1, 'stroke-linejoin': 'round' });
-    const feather1 = createSvgEl('line', { x1: 7, y1: -1, x2: 15, y2: -6, stroke: '#90a4ae', 'stroke-width': 0.9 });
-    const feather2 = createSvgEl('line', { x1: 7.5, y1: 0, x2: 16.5, y2: 0, stroke: '#90a4ae', 'stroke-width': 0.9 });
-    const feather3 = createSvgEl('line', { x1: 7, y1: 1, x2: 15, y2: 6, stroke: '#90a4ae', 'stroke-width': 0.9 });
+    const g = createSvgEl('g', { transform:`translate(${x} ${y}) rotate(${angleDeg}) scale(${scale})` });
+    const cork        = createSvgEl('ellipse', { cx:0, cy:0, rx:6, ry:4.6, fill:'#fff7e6', stroke:'#5d4037','stroke-width':1.4 });
+    const band        = createSvgEl('path', { d:'M -4 -1 Q 0 1 4 -1', fill:'none', stroke:'#8d6e63','stroke-width':1 });
+    const featherFill = createSvgEl('path', { d:'M 4 -1 L 16 -9 L 15 -4 L 18 0 L 15 4 L 16 9 L 4 1 Z', fill:'#ffffff', stroke:'#546e7a','stroke-width':1.1,'stroke-linejoin':'round' });
+    const feather1    = createSvgEl('line', { x1:7,  y1:-1, x2:15,   y2:-6, stroke:'#90a4ae','stroke-width':0.9 });
+    const feather2    = createSvgEl('line', { x1:7.5,y1:0,  x2:16.5, y2:0,  stroke:'#90a4ae','stroke-width':0.9 });
+    const feather3    = createSvgEl('line', { x1:7,  y1:1,  x2:15,   y2:6,  stroke:'#90a4ae','stroke-width':0.9 });
     [featherFill, feather1, feather2, feather3, cork, band].forEach(el => g.appendChild(el));
     parent.appendChild(g);
   }
 
   function drawStickPlayer(parent, x, y, side, color, labelText, motionPhase = 0) {
+    // facing: left players → right (positive scale), right players → left (mirrored)
     const facing = side === 'right' ? -1 : 1;
-    const step = Math.sin(motionPhase * Math.PI * 4) * 3.4;
-    const bounce = Math.sin(motionPhase * Math.PI * 2) * 1.1;
-    const groundY = y + 26;
-    const hipY = groundY - 29 - bounce;
-    const shoulderY = hipY - 26;
-    const headY = shoulderY - 16;
+    const bounce = Math.sin(motionPhase * Math.PI * 2) * 2.0;
 
-    const leftShoulderX = -9;
-    const rightShoulderX = 9;
-    const chestBaseY = shoulderY;
-    const chestApexY = shoulderY + 11;
+    function shadeColor(hex, t) { // t=0 → black, t=1 → original
+      const r=parseInt(hex.slice(1,3),16), g2=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+      return `rgb(${Math.round(r*t)},${Math.round(g2*t)},${Math.round(b*t)})`;
+    }
+    const cMain = color;
+    const cDark = shadeColor(color, 0.65);
+    const skin   = '#d4956a';
+    const skinD  = '#b87850';
+    const hair   = '#1a1010';
+    const shoe   = '#1a1a1a';
+    const wh     = 'rgba(255,255,255,0.80)';
+    const str    = 'rgba(200,225,200,0.85)';
 
-    const kneeFrontX = 10 + step * 0.35;
-    const kneeBackX = -8 - step * 0.15;
-    const footFrontX = 18 + step * 0.35;
-    const footBackX = -14 - step * 0.15;
-    const footFrontY = groundY;
-    const footBackY = groundY - 1;
+    // ── Skeleton Y anchors (local space, x=0 = player centre) ──
+    const gY  = y + 28;               // ground
+    const akY = gY - 4;               // ankle
+    const knFY= gY - 26 - bounce*0.3; // front knee
+    const knBY= gY - 22 - bounce*0.2; // back knee
+    const hiY = gY - 50 - bounce;     // hip
+    const waY = hiY + 7;              // waist / bottom of torso
+    const shY = hiY - 22;             // shoulders  ← SLIMMER: was -26
+    const nkBY= shY - 4;              // neck base
+    const hdY = shY - 20;             // head centre
 
-    const elbowRearX = -16;
-    const elbowRearY = shoulderY - 10;
-    const handRearX = -7;
-    const handRearY = shoulderY - 25;
+    // Foot/knee X — narrow stance for slim look
+    const fFX= 13, fBX= -11, knFX= 8, knBX= -7;
 
-    const elbowFrontX = 15;
-    const elbowFrontY = shoulderY + 4;
-    const handFrontX = 11;
-    const handFrontY = shoulderY + 16;
+    // ── Arm articulation points ──
+    // Racket arm (back/left): shoulder → elbow wide out → hand raised
+    const rShX= -7,  rShY= shY+2;
+    const rElX= -22, rElY= shY-10;   // elbow pushed far out sideways
+    const rHdX= -16, rHdY= shY-28;   // hand — not too close to head
 
-    const g = createSvgEl('g', { transform: `translate(${x} 0) scale(${facing} 1)` });
-    const shadow = createSvgEl('ellipse', { cx: 0, cy: groundY + 2, rx: 19, ry: 6.5, fill: 'rgba(16,36,60,0.18)' });
-    const head = createSvgEl('circle', { cx: 0, cy: headY, r: 9, fill: '#f6d4b8', stroke: color, 'stroke-width': 2.2 });
+    // Balance/aiming arm (front/right): hand raised to eye level
+    const fShX=  7,  fShY= shY+2;
+    const fElX=  19, fElY= shY-8;    // elbow mid-height
+    const fHdX=  17, fHdY= shY-24;   // hand at eye level
 
-    const torso = createSvgEl('path', {
-      d: `M ${leftShoulderX} ${chestBaseY} L ${rightShoulderX} ${chestBaseY} L 0 ${chestApexY} Z`,
-      fill: 'none',
-      stroke: color,
-      'stroke-width': 4.6,
-      'stroke-linejoin': 'round',
-      'stroke-linecap': 'round'
-    });
-    const bodyCore = createSvgEl('line', { x1: 0, y1: chestApexY, x2: 0, y2: hipY, stroke: color, 'stroke-width': 4.8, 'stroke-linecap': 'round' });
+    // Racket head centre (above hand along shaft direction)
+    const rfx= rHdX - 6, rfy= rHdY - 34;
 
-    const armRear1 = createSvgEl('line', { x1: leftShoulderX, y1: chestBaseY, x2: elbowRearX, y2: elbowRearY, stroke: color, 'stroke-width': 4.2, 'stroke-linecap': 'round' });
-    const armRear2 = createSvgEl('line', { x1: elbowRearX, y1: elbowRearY, x2: handRearX, y2: handRearY, stroke: color, 'stroke-width': 4.2, 'stroke-linecap': 'round' });
-    const armFront1 = createSvgEl('line', { x1: rightShoulderX, y1: chestBaseY, x2: elbowFrontX, y2: elbowFrontY, stroke: color, 'stroke-width': 4, 'stroke-linecap': 'round' });
-    const armFront2 = createSvgEl('line', { x1: elbowFrontX, y1: elbowFrontY, x2: handFrontX, y2: handFrontY, stroke: color, 'stroke-width': 4, 'stroke-linecap': 'round' });
+    // ── Helpers ──
+    const mk = (tag, a) => { const e=createSvgEl(tag,a); return e; };
+    const P = (d, fill, stroke, sw, op) => {
+      const e=createSvgEl('path',{d, fill:fill||'none', stroke:stroke||'none', 'stroke-width':sw||0, 'stroke-linecap':'round','stroke-linejoin':'round'});
+      if (op!==undefined) e.setAttribute('opacity', String(op)); return e;
+    };
+    const C  = (cx,cy,r,f,s,sw) => mk('circle', {cx,cy,r,fill:f, stroke:s||'none','stroke-width':sw||0});
+    const E  = (cx,cy,rx,ry,f,s,sw) => mk('ellipse',{cx,cy,rx,ry,fill:f,stroke:s||'none','stroke-width':sw||0});
+    const L  = (x1,y1,x2,y2,s,sw,op) => {
+      const e=createSvgEl('line',{x1,y1,x2,y2,stroke:s,'stroke-width':sw,'stroke-linecap':'round'});
+      if(op!==undefined) e.setAttribute('opacity',String(op)); return e;
+    };
 
-    const kneeFrontY = hipY + 18;
-    const kneeBackY = hipY + 20;
-    const legFront1 = createSvgEl('line', { x1: 0, y1: hipY, x2: kneeFrontX, y2: kneeFrontY, stroke: color, 'stroke-width': 4.6, 'stroke-linecap': 'round' });
-    const legFront2 = createSvgEl('line', { x1: kneeFrontX, y1: kneeFrontY, x2: footFrontX, y2: footFrontY, stroke: color, 'stroke-width': 4.6, 'stroke-linecap': 'round' });
-    const legBack1 = createSvgEl('line', { x1: 0, y1: hipY, x2: kneeBackX, y2: kneeBackY, stroke: color, 'stroke-width': 4.6, 'stroke-linecap': 'round' });
-    const legBack2 = createSvgEl('line', { x1: kneeBackX, y1: kneeBackY, x2: footBackX, y2: footBackY, stroke: color, 'stroke-width': 4.6, 'stroke-linecap': 'round' });
+    const g = createSvgEl('g', { transform:`translate(${x} 0) scale(${facing} 1)` });
 
-    const joints = [
-      [leftShoulderX, chestBaseY], [rightShoulderX, chestBaseY], [elbowRearX, elbowRearY], [elbowFrontX, elbowFrontY], [kneeFrontX, kneeFrontY], [kneeBackX, kneeBackY]
-    ].map(([cx, cy]) => createSvgEl('circle', { cx, cy, r: 2.8, fill: '#ffffff', stroke: color, 'stroke-width': 1.4 }));
+    // Ground shadow
+    g.appendChild(E(0, gY+4, 22, 5, 'rgba(0,0,0,0.20)'));
 
-    const racketShaft = createSvgEl('line', { x1: handRearX - 2, y1: handRearY + 1, x2: handRearX - 18, y2: handRearY - 24, stroke: '#5d4037', 'stroke-width': 3.1, 'stroke-linecap': 'round' });
-    const racketHead = createSvgEl('ellipse', { cx: handRearX - 26, cy: handRearY - 36, rx: 7.5, ry: 12, fill: 'none', stroke: '#37474f', 'stroke-width': 2.2 });
-    const racketString1 = createSvgEl('line', { x1: handRearX - 26, y1: handRearY - 47, x2: handRearX - 26, y2: handRearY - 25, stroke: '#90a4ae', 'stroke-width': 0.9 });
-    const racketString2 = createSvgEl('line', { x1: handRearX - 31, y1: handRearY - 36, x2: handRearX - 21, y2: handRearY - 36, stroke: '#90a4ae', 'stroke-width': 0.9 });
+    // ── BACK LEG ──
+    g.appendChild(L(0,hiY, knBX,knBY, cDark, 7, 0.80));
+    g.appendChild(L(knBX,knBY, fBX,akY, cDark, 6, 0.80));
+    g.appendChild(C(knBX,knBY, 4, cDark,'none',0));          // knee joint
+    // back shoe blanc
+    g.appendChild(P(`M ${fBX-7} ${akY+1} Q ${fBX-8} ${gY} ${fBX-4} ${gY+2} L ${fBX+5} ${gY+2} Q ${fBX+7} ${gY} ${fBX+5} ${akY+1} Z`, '#f0f0f0','#c8c8c8',0.8, 0.80));
 
-    [shadow, head, torso, bodyCore, armRear1, armRear2, armFront1, armFront2, legFront1, legFront2, legBack1, legBack2, ...joints, racketShaft, racketHead, racketString1, racketString2].forEach(el => g.appendChild(el));
+    // ── FRONT LEG ──
+    g.appendChild(L(0,hiY, knFX,knFY, cMain, 9));
+    g.appendChild(L(knFX,knFY, fFX,akY, cMain, 8));
+    g.appendChild(C(knFX,knFY, 4.5, cDark,'none',0));         // knee joint
+    // sock white band
+    g.appendChild(L(fFX-4,akY+1, fFX+5,akY+1, wh, 2.5));
+    // front shoe blanc
+    g.appendChild(P(`M ${fFX-5} ${akY+2} Q ${fFX-6} ${gY} ${fFX-2} ${gY+3} L ${fFX+9} ${gY+3} Q ${fFX+12} ${gY+1} ${fFX+11} ${akY+2} Z`, '#f0f0f0','#c8c8c8',0.8));
+    g.appendChild(L(fFX-2,gY+1, fFX+8,gY+1, '#aaaaaa', 1.2)); // lace
+
+    // ── SHORT — blanc, moins large (±8 au lieu de fBX/fFX) ──
+    const sL = -8, sR = 8; // bords du short, plus étroit que les jambes
+    g.appendChild(P(`M ${sL} ${hiY+3} Q ${sL-2} ${waY+7} ${sL+1} ${waY+14} Q 0 ${waY+16} ${sR-1} ${waY+14} Q ${sR+1} ${waY+7} ${sR} ${hiY+3} Q 0 ${hiY+6} ${sL} ${hiY+3} Z`, '#e8edf2','none',0));
+    g.appendChild(P(`M ${sL} ${hiY+3} Q ${sL-2} ${waY+7} ${sL+1} ${waY+14} Q -2 ${waY+15} -2 ${waY+7} Q -2 ${waY-1} -2 ${hiY+5} Q 0 ${hiY+6} ${sL} ${hiY+3} Z`, '#c8d0da','none',0, 0.55));
+    g.appendChild(P(`M ${sL} ${hiY+3} Q 0 ${hiY+6} ${sR} ${hiY+3}`, 'none', '#b0b8c4', 1.5));
+    g.appendChild(P(`M ${sL+1} ${waY+14} Q 0 ${waY+16} ${sR-1} ${waY+14}`, 'none', '#b0b8c4', 1.2));
+
+    // ── TORSO  (slim: ±9 shoulders, ±7 waist) ──
+    g.appendChild(P(`M -7 ${waY} Q -10 ${(waY+shY)/2} -9 ${shY+1} Q 0 ${shY-1} 9 ${shY+1} Q 10 ${(waY+shY)/2} 7 ${waY} Q 0 ${waY+2} -7 ${waY} Z`, cMain,'none',0));
+    // shadow left half
+    g.appendChild(P(`M -7 ${waY} Q -10 ${(waY+shY)/2} -9 ${shY+1} Q 0 ${shY} 0 ${waY} Q 0 ${waY+2} -7 ${waY} Z`, cDark,'none',0, 0.55));
+    // collar
+    g.appendChild(P(`M -5 ${shY+1} Q 0 ${shY-3} 5 ${shY+1}`, 'none', wh, 2.0));
+    // bottom band
+    g.appendChild(P(`M -7 ${waY} Q 0 ${waY+3} 7 ${waY}`, 'none', wh, 1.5));
+
+    // ── BACK ARM  (racket) — upper arm → elbow → forearm ──
+    g.appendChild(L(rShX,rShY, rElX,rElY, cMain, 6));   // upper arm
+    g.appendChild(C(rElX,rElY, 3.5, cDark,'none',0));    // elbow joint
+    g.appendChild(L(rElX,rElY, rHdX,rHdY, cDark, 5));   // forearm
+
+    // Racket: grip → shaft → throat → head
+    g.appendChild(L(rHdX,rHdY, rHdX-5,rHdY-12, '#7a4520', 4.5)); // grip
+    g.appendChild(L(rHdX,rHdY, rHdX-2,rHdY-6, wh, 2, 0.75));     // grip tape
+    g.appendChild(L(rHdX-5,rHdY-12, rfx+2,rfy+16, '#5d3a18', 3.5)); // shaft
+    // throat (V shape)
+    g.appendChild(P(`M ${rfx-5} ${rfy+14} L ${rfx+2} ${rfy+16} L ${rfx+7} ${rfy+12}`, 'none','#4a2e10', 2.5));
+    // frame oval
+    g.appendChild(E(rfx, rfy, 11, 16, 'none','#2a2a2a', 3.2));
+    // strings
+    for (let sv=-1; sv<=1; sv++) g.appendChild(L(rfx+sv*5, rfy-14, rfx+sv*5, rfy+13, str, 0.9));
+    for (let sh=-2; sh<=2; sh++) g.appendChild(L(rfx-10, rfy+sh*5, rfx+10, rfy+sh*5, str, 0.9));
+
+    // ── FRONT ARM (visée) — main à hauteur des yeux ──
+    g.appendChild(L(fShX,fShY, fElX,fElY, cMain, 6));
+    g.appendChild(C(fElX,fElY, 3.5, cDark,'none',0));
+    g.appendChild(L(fElX,fElY, fHdX,fHdY, cMain, 5));
+    g.appendChild(C(fHdX, fHdY, 4, skin, skinD, 1));
+    // doigts légèrement vers le haut — pointant vers le volant
+    g.appendChild(L(fHdX-1,fHdY-3, fHdX-3,fHdY-9, skinD, 1.8));
+    g.appendChild(L(fHdX+1,fHdY-4, fHdX+1,fHdY-10,skinD, 1.8));
+    g.appendChild(L(fHdX+3,fHdY-3, fHdX+5,fHdY-8, skinD, 1.8));
+
+    // ── NECK ──
+    g.appendChild(P(`M -4 ${nkBY+3} Q 0 ${nkBY-2} 4 ${nkBY+3} Q 0 ${nkBY+5} -4 ${nkBY+3} Z`, skin,'none',0));
+
+    // ── HEAD — full face, centred ──
+    // Head shape
+    g.appendChild(E(0, hdY, 13, 15, skin, skinD, 1));
+    // Ears (both sides — face seen from front)
+    g.appendChild(E(-13, hdY+2, 3.5, 5, skinD,'none',0));
+    g.appendChild(E( 13, hdY+2, 3.5, 5, skinD,'none',0));
+    // Hair cap
+    g.appendChild(P(`M -13 ${hdY+3} Q -12 ${hdY-17} 0 ${hdY-17} Q 12 ${hdY-17} 13 ${hdY+3} Q 6 ${hdY-5} 0 ${hdY-6} Q -6 ${hdY-5} -13 ${hdY+3} Z`, hair,'none',0));
+    // Left eyebrow
+    g.appendChild(P(`M -8 ${hdY-5} Q -5 ${hdY-7} -2 ${hdY-5}`, 'none', hair, 1.4));
+    // Right eyebrow
+    g.appendChild(P(`M  2 ${hdY-5} Q  5 ${hdY-7}  8 ${hdY-5}`, 'none', hair, 1.4));
+    // Left eye white
+    g.appendChild(E(-5, hdY+1, 4, 3, '#ffffff','none',0));
+    // Left iris
+    g.appendChild(C(-5, hdY+1, 2, '#2a1205','none',0));
+    g.appendChild(C(-4, hdY,   0.9,'#ffffff','none',0)); // highlight
+    // Right eye white
+    g.appendChild(E( 5, hdY+1, 4, 3, '#ffffff','none',0));
+    // Right iris
+    g.appendChild(C( 5, hdY+1, 2, '#2a1205','none',0));
+    g.appendChild(C( 6, hdY,   0.9,'#ffffff','none',0)); // highlight
+    // Nose (simple bridge + nostrils)
+    g.appendChild(P(`M 0 ${hdY+3} L 0 ${hdY+7} Q -2 ${hdY+9} -3 ${hdY+8}`, 'none', skinD, 1.3));
+    g.appendChild(P(`M 0 ${hdY+7} Q  2 ${hdY+9}  3 ${hdY+8}`, 'none', skinD, 1.3));
+    // Mouth
+    g.appendChild(P(`M -5 ${hdY+12} Q 0 ${hdY+15} 5 ${hdY+12}`, 'none', '#a06040', 1.8));
+    // Chin line hint
+    g.appendChild(P(`M -5 ${hdY+13} Q 0 ${hdY+16} 5 ${hdY+13}`, 'none', skinD, 0.8, 0.4));
+
     parent.appendChild(g);
 
-    const label = createSvgEl('text', {
-      x: x,
-      y: y + 52,
-      'text-anchor': 'middle',
-      'font-size': 16,
-      'font-weight': 800,
-      fill: '#10243c'
-    });
-    label.textContent = labelText;
-    parent.appendChild(label);
+    // ── NAME BADGE ──
+    const bW = Math.max(52, labelText.length * 7.8);
+    const bX = x - bW/2, bY = gY + 9;
+    const bg = createSvgEl('g');
+    bg.appendChild(mk('rect',{x:bX+1,y:bY+2,width:bW,height:18,rx:9,fill:'rgba(0,0,0,0.20)'}));
+    bg.appendChild(mk('rect',{x:bX,y:bY,width:bW,height:18,rx:9,fill:cMain,stroke:'#fff','stroke-width':1.5}));
+    const lbl = createSvgEl('text',{x:String(x),y:String(bY+13),'text-anchor':'middle','font-size':'11','font-weight':'800','font-family':'DM Sans,Arial,sans-serif',fill:'#fff','letter-spacing':'0.04em'});
+    lbl.textContent = labelText;
+    bg.appendChild(lbl);
+    parent.appendChild(bg);
   }
 
   function drawPlayers() {
     const s = getSituation();
     const positions = getRenderedPlayerPositions();
     const g = createSvgEl('g');
-
     s.players.forEach((player, idx) => {
       const pos = positions[idx];
       if (!pos) return;
       const side = player.zoneId && zoneById[player.zoneId]?.side;
-      drawStickPlayer(g, pos.x, pos.y, side, idx === 0 ? '#67c96b' : '#e53935', getPlayerDisplayLabel(player, idx), playback.active ? playback.progress : 0);
+      drawStickPlayer(g, pos.x, pos.y, side, idx===0?'#67c96b':'#e53935', getPlayerDisplayLabel(player, idx), playback.active?playback.progress:0);
     });
-
     svg.appendChild(g);
   }
-
 
   function drawFlashLabels() {
     const now = Date.now();
@@ -923,7 +1133,7 @@
     if (!state.ui.flashLabels.length) return;
     const g = createSvgEl('g');
     state.ui.flashLabels.forEach(item => {
-      const text = createSvgEl('text', { x:item.x, y:item.y, fill:item.color, 'font-size':20, 'font-weight':900, 'text-anchor':'middle' });
+      const text = createSvgEl('text',{x:item.x,y:item.y,fill:item.color,'font-size':20,'font-weight':900,'text-anchor':'middle'});
       text.textContent = item.text;
       g.appendChild(text);
     });
@@ -933,103 +1143,70 @@
 
   function getZoneFromPoint(px, py) {
     const padding = 16;
-    let best = null;
-    let bestScore = Infinity;
-
+    let best = null, bestScore = Infinity;
     zones.forEach(z => {
-      const insideExpanded = px >= z.x - padding && px <= z.x + z.w + padding && py >= z.y - padding && py <= z.y + z.h + padding;
-      if (!insideExpanded) return;
-      const dx = px - z.cx;
-      const dy = py - z.cy;
-      const score = dx * dx + dy * dy;
-      if (score < bestScore) {
-        bestScore = score;
-        best = z;
-      }
+      const inside = px>=z.x-padding && px<=z.x+z.w+padding && py>=z.y-padding && py<=z.y+z.h+padding;
+      if (!inside) return;
+      const score = (px-z.cx)**2 + (py-z.cy)**2;
+      if (score < bestScore) { bestScore = score; best = z; }
     });
-
     if (best) return best;
-
     zones.forEach(z => {
-      if (px >= z.x && px <= z.x + z.w && py >= z.y && py <= z.y + z.h) {
-        const dx = px - z.cx;
-        const dy = py - z.cy;
-        const score = dx * dx + dy * dy;
-        if (score < bestScore) {
-          bestScore = score;
-          best = z;
-        }
+      if (px>=z.x && px<=z.x+z.w && py>=z.y && py<=z.y+z.h) {
+        const score = (px-z.cx)**2 + (py-z.cy)**2;
+        if (score < bestScore) { bestScore = score; best = z; }
       }
     });
-
     return best;
   }
 
   function drawHitAreas() {
     const [x0,,,,,,x5] = geometry.x;
     const [y0,,,,y4] = geometry.y;
-    const overlay = createSvgEl('rect', {
-      x: x0, y: y0, width: x5 - x0, height: y4 - y0,
-      fill: 'rgba(255,255,255,0.001)'
-    });
+    const overlay = createSvgEl('rect', { x:x0, y:y0, width:x5-x0, height:y4-y0, fill:'rgba(255,255,255,0.001)' });
     overlay.style.cursor = 'pointer';
-
     const handler = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       const pt = svg.createSVGPoint();
-      pt.x = e.clientX;
-      pt.y = e.clientY;
+      pt.x = e.clientX; pt.y = e.clientY;
       const transformed = pt.matrixTransform(svg.getScreenCTM().inverse());
       const zone = getZoneFromPoint(transformed.x, transformed.y);
       if (zone) onZoneClick(zone.id);
     };
-
-    overlay.addEventListener('pointerdown', handler, { passive: false });
+    overlay.addEventListener('pointerdown', handler, { passive:false });
     overlay.addEventListener('click', handler);
     svg.appendChild(overlay);
   }
 
   function onZoneClick(zoneId) {
     const s = getSituation();
-
     if (state.ui.activeMode === 'placement') {
       stopPlayback(false);
       s.players[state.ui.activePlayer].zoneId = zoneId;
-      saveState();
-      renderAll();
-      return;
+      saveState(); renderAll(); return;
     }
-
     if (state.ui.activeMode === 'frappe') {
       stopPlayback(false);
       if (!state.ui.pendingShotStart) {
         state.ui.pendingShotStart = zoneId;
         const z = zoneById[zoneId];
         state.ui.flashLabels.push({ text:'Début', x:z.cx, y:z.cy-12, color:shots[state.ui.activeShot].color, ts:Date.now() });
-        renderAll();
-        return;
+        renderAll(); return;
       }
-
       const startZoneId = state.ui.pendingShotStart;
       if (!areOppositeSides(startZoneId, zoneId)) {
         const z = zoneById[zoneId];
-        state.ui.flashLabels.push({ text:'Fin dans l’autre camp', x:z.cx, y:z.cy-12, color:'#c62828', ts:Date.now() });
-        renderAll();
-        return;
+        state.ui.flashLabels.push({ text:'Fin dans l\'autre camp', x:z.cx, y:z.cy-12, color:'#c62828', ts:Date.now() });
+        renderAll(); return;
       }
-
-      s.shots.push({ type: state.ui.activeShot, startZoneId, endZoneId: zoneId });
+      s.shots.push({ type:state.ui.activeShot, startZoneId, endZoneId:zoneId });
       state.ui.lastPlacedShot = state.ui.activeShot;
       const z1 = zoneById[startZoneId], z2 = zoneById[zoneId];
       state.ui.flashLabels.push({ text:'Début', x:z1.cx, y:z1.cy-12, color:shots[state.ui.activeShot].color, ts:Date.now() });
-      state.ui.flashLabels.push({ text:'Fin', x:z2.cx, y:z2.cy-12, color:shots[state.ui.activeShot].color, ts:Date.now() });
+      state.ui.flashLabels.push({ text:'Fin',   x:z2.cx, y:z2.cy-12, color:shots[state.ui.activeShot].color, ts:Date.now() });
       state.ui.pendingShotStart = null;
-      saveState();
-      renderAll();
-      return;
+      saveState(); renderAll(); return;
     }
-
     if (state.ui.activeMode === 'zone') {
       stopPlayback(false);
       const existingIndex = s.zoneAnnotations.findIndex(a => a.zoneId === zoneId);
@@ -1038,19 +1215,18 @@
         state.ui.selectedAnnotation = null;
       } else {
         if (existingIndex >= 0) s.zoneAnnotations.splice(existingIndex, 1);
-        s.zoneAnnotations.push({ zoneId, type: state.ui.activeZoneType });
+        s.zoneAnnotations.push({ zoneId, type:state.ui.activeZoneType });
         state.ui.selectedAnnotation = s.zoneAnnotations.length - 1;
       }
-      saveState();
-      renderAll();
+      saveState(); renderAll();
     }
   }
 
-  function updateStatus() { }
+  function updateStatus() {}
 
   function renderAll() {
     const s = getSituation();
-    s.title = situationTitle.value;
+    s.title      = situationTitle.value;
     s.deviceText = deviceText.value;
     syncMetaCounts();
     drawCourtBase();
@@ -1062,6 +1238,7 @@
     renderButtons();
     updateStatus();
     workAdvice.value = works[s.workKey].help;
+    if (workAdviceDisplay) workAdviceDisplay.textContent = works[s.workKey].help;
   }
 
   [studentName, theme, situationTitle, deviceText].forEach(el => el.addEventListener('input', () => { saveState(); renderAll(); }));
@@ -1069,30 +1246,24 @@
   document.getElementById('saveBtn').onclick = () => {
     saveState();
     const payload = JSON.stringify(state, null, 2);
-    const blob = new Blob([payload], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const safeName = ((state.meta.studentName || 'lecon').trim().replace(/[^a-zA-Z0-9À-ÿ-_ ]+/g,'').replace(/\s+/g,'_') || 'lecon');
+    const blob    = new Blob([payload], { type:'application/json' });
+    const url     = URL.createObjectURL(blob);
+    const a       = document.createElement('a');
+    const safeName = ((state.meta.studentName||'lecon').trim().replace(/[^a-zA-Z0-9À-ÿ-_ ]+/g,'').replace(/\s+/g,'_')||'lecon');
     a.href = url;
     a.download = `${safeName}_badminton_lecon.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 500);
     renderAll();
   };
 
   document.getElementById('resetCurrentBtn').onclick = () => {
     state.situations[state.currentSituationIndex] = createSituation();
-    resetUiTransient();
-    syncFormFromState();
-    saveState();
-    renderAll();
+    resetUiTransient(); syncFormFromState(); saveState(); renderAll();
   };
+
   document.getElementById('undoShotBtn').onclick = () => {
-    getSituation().shots.pop();
-    saveState();
-    renderAll();
+    getSituation().shots.pop(); saveState(); renderAll();
   };
 
   function startShotsPlayback() {
@@ -1102,62 +1273,53 @@
     playback.active = true;
     playback.playerPositions = getSituation().players.map(player => {
       const z = player.zoneId && zoneById[player.zoneId];
-      return z ? { x: z.cx, y: z.cy } : null;
+      return z ? { x:z.cx, y:z.cy } : null;
     });
     state.ui.isPlayingShots = true;
     state.ui.playIndex = 0;
 
     function animateShot(idx) {
       if (!playback.active) return;
-      if (idx >= list.length) {
-        setTimeout(() => stopPlayback(true), 280);
-        return;
-      }
+      if (idx >= list.length) { setTimeout(() => stopPlayback(true), 280); return; }
       const shot = list[idx];
       const endZone = zoneById[shot.endZoneId];
       const receiveSide = endZone?.side;
       playback.shotIndex = idx;
-      playback.fromPositions = playback.playerPositions.map(p => p ? { ...p } : null);
+      playback.fromPositions = playback.playerPositions.map(p => p?{...p}:null);
       const startZone = zoneById[shot.startZoneId];
       const hitterSide = startZone?.side;
       playback.toPositions = playback.playerPositions.map((p, playerIdx) => {
         if (!p) return null;
         const baseZone = getSituation().players[playerIdx].zoneId && zoneById[getSituation().players[playerIdx].zoneId];
-        if (!baseZone) return { ...p };
-        if (baseZone.side === receiveSide && endZone) return { x: endZone.cx, y: endZone.cy };
+        if (!baseZone) return {...p};
+        if (baseZone.side === receiveSide && endZone) return { x:endZone.cx, y:endZone.cy };
         if (baseZone.side === hitterSide) {
           const center = sideCenters[hitterSide];
-          return center ? { x: center.x, y: center.y } : { ...p };
+          return center ? { x:center.x, y:center.y } : {...p};
         }
-        return { ...p };
+        return {...p};
       });
       const duration = 1100;
       const startTime = performance.now();
-
       const frame = (now) => {
         if (!playback.active) return;
         const t = Math.min(1, (now - startTime) / duration);
         playback.progress = t;
         state.ui.playIndex = idx;
         renderAll();
-        if (t < 1) {
-          playback.rafId = requestAnimationFrame(frame);
-        } else {
-          playback.playerPositions = playback.toPositions.map(p => p ? { ...p } : null);
-          setTimeout(() => animateShot(idx + 1), 180);
+        if (t < 1) { playback.rafId = requestAnimationFrame(frame); }
+        else {
+          playback.playerPositions = playback.toPositions.map(p => p?{...p}:null);
+          setTimeout(() => animateShot(idx+1), 180);
         }
       };
       playback.rafId = requestAnimationFrame(frame);
     }
-
     animateShot(0);
   }
 
   document.getElementById('playShotsBtn').onclick = () => {
-    if (playback.active) {
-      stopPlayback(true);
-      return;
-    }
+    if (playback.active) { stopPlayback(true); return; }
     startShotsPlayback();
   };
 
@@ -1173,12 +1335,8 @@
         if (!state.ui.lastPlacedShot) state.ui.lastPlacedShot = state.ui.activeShot || 'service';
         if (state.ui.isPlayingShots === undefined) { state.ui.isPlayingShots = false; state.ui.playIndex = -1; }
         if (!state.situations.length) state.situations = [createSituation()];
-        state.currentSituationIndex = Math.max(0, Math.min(state.currentSituationIndex || 0, state.situations.length - 1));
-        stopPlayback(false);
-        resetUiTransient();
-        syncFormFromState();
-        saveState();
-        renderAll();
+        state.currentSituationIndex = Math.max(0, Math.min(state.currentSituationIndex||0, state.situations.length-1));
+        stopPlayback(false); resetUiTransient(); syncFormFromState(); saveState(); renderAll();
       } catch (e) { alert('Import JSON impossible.'); }
     };
     reader.readAsText(file);
@@ -1193,8 +1351,7 @@
   };
 
   window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
+    e.preventDefault(); deferredPrompt = e;
     document.getElementById('installBtn').hidden = false;
   });
 
@@ -1207,7 +1364,7 @@
   };
 
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
   }
 
   syncFormFromState();
