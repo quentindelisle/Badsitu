@@ -132,178 +132,150 @@
       background:var(--blue2); color:#fff; border-color:var(--blue2);
     }
 
-    /* ── MAIN AREA ── */
+    /* ══ LAYOUT PAYSAGE
+       body (flex col) :
+         .header          ← fixe
+         .main-area       ← flex:1, grille 2 cols
+           .tools-panel   ← 214px, toute la hauteur
+           .right-col     ← 1fr, flex col
+             .terrain-panel  ← flex:1 (prend tout)
+             .consignes-strip ← fixe ~62px
+    ══ */
     .main-area {
-      flex: 1; min-height: 0;
-      display: grid;
-      grid-template-columns: 220px 1fr 230px;
-      gap: 5px;
+      flex:1; min-height:0;
+      display:grid;
+      grid-template-columns: 214px 1fr;
+      gap:5px;
     }
 
-    /* ── PANELS ── */
     .panel {
-      background: var(--surface);
-      border-radius: var(--r);
-      border: 1px solid rgba(10,32,69,.07);
-      box-shadow: 0 2px 10px rgba(10,32,69,.08);
-      overflow: hidden;
+      background:var(--surface);
+      border-radius:var(--r);
+      border:1px solid rgba(10,32,69,.07);
+      box-shadow:0 2px 10px rgba(10,32,69,.08);
+      overflow:hidden;
     }
 
-    /* ── LEFT PANEL : outils ── */
+    /* ── COL GAUCHE : outils + situation/forme/rappels ── */
     .tools-panel {
-      display: flex; flex-direction: column;
-      padding: 7px; gap: 5px; overflow-y: auto;
+      display:flex; flex-direction:column;
+      padding:7px; gap:5px; overflow-y:auto; min-height:0;
     }
     .tools-panel::-webkit-scrollbar { width:3px; }
     .tools-panel::-webkit-scrollbar-thumb { background:rgba(10,32,69,.15); border-radius:3px; }
 
-    .tool-section { display:flex; flex-direction:column; gap:3px; }
-    .tool-label {
-      font-family:var(--ff-h); font-size:0.60rem; font-weight:800;
+    .tool-section { display:flex; flex-direction:column; gap:3px; flex-shrink:0; }
+    .tool-label, .dev-label {
+      font-family:var(--ff-h); font-size:0.59rem; font-weight:800;
       letter-spacing:.09em; text-transform:uppercase; color:var(--blue);
-      padding-bottom:2px;
-      border-bottom: 1px solid rgba(18,84,204,.12);
+      padding-bottom:2px; border-bottom:1px solid rgba(18,84,204,.12);
     }
     .btn-row { display:flex; flex-wrap:wrap; gap:3px; }
+    .divider { height:1px; background:rgba(10,32,69,.09); flex-shrink:0; }
 
     .player-chip {
       color:#fff; border:2px solid transparent; padding:3px 8px;
       border-radius:999px; font-size:0.72rem; font-weight:600;
-      transition: all .15s; box-shadow:0 2px 6px rgba(0,0,0,.15);
+      transition:all .15s; box-shadow:0 2px 6px rgba(0,0,0,.15);
     }
     .player-chip.active {
       outline:2px solid rgba(18,84,204,.40);
-      box-shadow:0 0 0 4px rgba(18,84,204,.15);
-      transform:translateY(-1px);
+      box-shadow:0 0 0 4px rgba(18,84,204,.15); transform:translateY(-1px);
     }
-
     .shot-btn {
       color:#111; border:none; border-radius:6px;
-      padding:3px 7px; font-size:0.72rem;
-      box-shadow:0 2px 6px rgba(0,0,0,.14);
+      padding:3px 7px; font-size:0.72rem; box-shadow:0 2px 6px rgba(0,0,0,.14);
     }
-    .shot-btn.active {
-      outline:2px solid rgba(255,255,255,.85);
-      box-shadow:0 0 0 3px rgba(18,84,204,.30);
-    }
-    .shot-btn.last-used {
-      outline:2px solid rgba(255,255,255,.90);
-      box-shadow:0 0 0 3px rgba(18,84,204,.24);
-    }
-
+    .shot-btn.active   { outline:2px solid rgba(255,255,255,.85); box-shadow:0 0 0 3px rgba(18,84,204,.30); }
+    .shot-btn.last-used{ outline:2px solid rgba(255,255,255,.90); box-shadow:0 0 0 3px rgba(18,84,204,.24); }
     .work-btn {
       background:var(--sky); color:var(--blue);
-      border:1px solid rgba(18,84,204,.18);
-      padding:3px 8px; border-radius:6px; font-size:0.72rem;
+      border:1px solid rgba(18,84,204,.18); padding:3px 8px; border-radius:6px; font-size:0.72rem;
     }
-    .work-btn.active {
-      background:var(--blue); color:#fff;
-      box-shadow:0 2px 8px rgba(18,84,204,.30);
-    }
-
+    .work-btn.active { background:var(--blue); color:#fff; }
     .zone-btn {
       color:#fff; border-radius:6px; font-size:0.68rem; font-weight:700;
-      padding:3px 6px; display:flex; align-items:center; gap:2px;
+      padding:3px 6px; display:inline-flex; align-items:center; gap:2px; white-space:nowrap;
     }
-    .zone-btn.active {
-      outline:2px solid rgba(255,255,255,.85);
-      box-shadow:0 0 0 3px rgba(18,84,204,.24);
-      transform:translateY(-1px);
-    }
-
+    .zone-btn.active { outline:2px solid rgba(255,255,255,.85); box-shadow:0 0 0 3px rgba(18,84,204,.24); transform:translateY(-1px); }
     .hero-play-btn {
       background:linear-gradient(135deg,var(--orange),#ff7940);
       color:#fff; font-size:0.72rem; padding:4px 8px; border-radius:7px;
-      box-shadow:0 3px 10px rgba(240,90,26,.30);
     }
-    .hero-play-btn.active {
-      background:linear-gradient(135deg,var(--green),#23b267);
-      box-shadow:0 3px 10px rgba(26,143,82,.30);
+    .hero-play-btn.active { background:linear-gradient(135deg,var(--green),#23b267); }
+
+    /* ── COL DROITE : flex col → terrain + consignes ── */
+    .right-col {
+      display:flex; flex-direction:column; gap:5px; min-height:0;
     }
 
-    .divider { height:1px; background:rgba(10,32,69,.08); }
-
-    /* ── CENTRE : terrain ── */
+    /* Terrain : prend tout l'espace vertical restant */
     .terrain-panel {
-      display:flex; flex-direction:column;
-      padding: 5px; gap: 4px;
-    }
-    .situation-nav { display:flex; flex-wrap:wrap; gap:3px; }
-    .situation-nav-btn {
-      background:var(--sky); color:var(--blue);
-      border-radius:6px; padding:2px 9px;
-      font-family:var(--ff-h); font-size:0.70rem; font-weight:700;
-      border:1px solid rgba(18,84,204,.18);
-    }
-    .situation-nav-btn.active {
-      background:var(--blue); color:#fff;
-    }
-    .terrain-shell {
       flex:1; min-height:0;
+      display:flex; flex-direction:column; padding:5px; gap:4px;
+    }
+    .situation-nav { display:flex; flex-wrap:wrap; gap:3px; flex-shrink:0; }
+    .situation-nav-btn {
+      background:var(--sky); color:var(--blue); border-radius:6px;
+      padding:2px 9px; font-family:var(--ff-h); font-size:0.70rem;
+      font-weight:700; border:1px solid rgba(18,84,204,.18);
+    }
+    .situation-nav-btn.active { background:var(--blue); color:#fff; }
+    .terrain-shell {
+      flex:1; min-height:0; position:relative;
       background:linear-gradient(160deg,#eef4fc,#e2ecf8);
-      border-radius:8px; border:1px solid rgba(10,32,69,.08);
-      display:flex; flex-direction:column;
-      padding:3px;
+      border-radius:8px; border:1px solid rgba(10,32,69,.08); overflow:hidden;
     }
-    svg { flex:1; min-height:0; width:100%; height:100%; display:block; touch-action:manipulation; }
-
-    /* ── RIGHT PANEL : dispositif ── */
-    .device-panel {
-      display:flex; flex-direction:column;
-      padding:7px; gap:5px; overflow-y:auto;
-    }
-    .device-panel::-webkit-scrollbar { width:3px; }
-    .device-panel::-webkit-scrollbar-thumb { background:rgba(10,32,69,.15); border-radius:3px; }
-
-    .dev-label {
-      font-family:var(--ff-h); font-size:0.60rem; font-weight:800;
-      letter-spacing:.09em; text-transform:uppercase; color:var(--blue);
-      padding-bottom:2px; border-bottom:1px solid rgba(18,84,204,.12);
+    svg {
+      position:absolute; top:0; left:0;
+      width:100%; height:100%; display:block; touch-action:manipulation;
     }
 
+    /* Barre consignes : hauteur fixe, pleine largeur de la col droite */
+    .consignes-strip {
+      flex-shrink:0;
+      display:flex; align-items:flex-start; gap:8px;
+      padding:5px 8px;
+    }
+    .consignes-strip .dev-label { border-bottom:none; padding-bottom:0; white-space:nowrap; margin-top:3px; }
+    .consignes-strip textarea { flex:1; height:50px; }
+
+    /* ── INPUTS & TEXTAREA globaux ── */
     input[type="text"], textarea, select {
-      font: 500 0.78rem var(--ff-b);
-      border: 1px solid rgba(10,32,69,.14);
-      border-radius: 6px; padding: 4px 8px;
-      background: var(--sf2); color: var(--ink);
-      outline: none; width: 100%;
-      transition: border-color .15s, box-shadow .15s;
+      font:500 0.78rem var(--ff-b);
+      border:1px solid rgba(10,32,69,.14); border-radius:6px;
+      padding:4px 8px; background:var(--sf2); color:var(--ink);
+      outline:none; width:100%;
+      transition:border-color .15s, box-shadow .15s;
     }
     input[type="text"] { height:26px; }
     input[type="text"]:focus, textarea:focus {
-      border-color:var(--blue2);
-      box-shadow:0 0 0 2px rgba(26,104,240,.12);
-      background:#fff;
+      border-color:var(--blue2); box-shadow:0 0 0 2px rgba(26,104,240,.12); background:#fff;
     }
-    textarea { resize:vertical; min-height:70px; font-size:0.76rem; line-height:1.5; }
-
+    textarea { resize:none; font-size:0.75rem; line-height:1.45; }
     label {
       font-family:var(--ff-h); font-size:0.60rem; font-weight:700;
       letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);
       display:block; margin-bottom:2px;
     }
-
     .advice-box {
       background:linear-gradient(135deg,#f0f5ff,#e8f0fe);
-      border:1px solid rgba(18,84,204,.15);
-      border-radius:7px; padding:6px 8px;
-      color:var(--ink2); font-size:0.72rem; line-height:1.5;
+      border:1px solid rgba(18,84,204,.15); border-radius:6px;
+      padding:4px 7px; color:var(--ink2); font-size:0.70rem;
+      line-height:1.4; max-height:50px; overflow-y:auto;
     }
 
     .footer-note { display:none; }
 
-    /* ── FALLBACK portrait ── */
+    /* ── PORTRAIT fallback ── */
     @media (orientation: portrait) {
       html, body { height:auto; overflow:auto; }
-      body { padding:8px; gap:8px; flex-direction:column; }
-      .main-area {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-        height: auto;
-      }
-      .tools-panel, .device-panel { overflow-y:visible; }
-      svg { height:auto; }
-      .terrain-shell { height:auto; }
+      body { padding:8px; gap:8px; }
+      .main-area { grid-template-columns:1fr; height:auto; flex:none; }
+      .right-col { min-height:0; }
+      .terrain-panel { height:55vw; min-height:180px; flex:none; }
+      .terrain-shell { position:relative; }
+      .consignes-strip textarea { height:80px; }
     }
   </style>
 </head>
@@ -340,7 +312,7 @@
 
 <div class="main-area">
 
-  <!-- ── COLONNE GAUCHE : outils ── -->
+  <!-- ── GAUCHE : outils + situation + forme + rappels ── -->
   <div class="panel tools-panel">
 
     <div class="tool-section">
@@ -366,18 +338,7 @@
       <div class="btn-row" id="zoneButtons"></div>
     </div>
 
-  </div>
-
-  <!-- ── CENTRE : terrain ── -->
-  <div class="panel terrain-panel">
-    <div id="situationNav" class="situation-nav"></div>
-    <div class="terrain-shell">
-      <svg id="courtSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" aria-label="Terrain de badminton interactif"></svg>
-    </div>
-  </div>
-
-  <!-- ── COLONNE DROITE : dispositif ── -->
-  <div class="panel device-panel">
+    <div class="divider"></div>
 
     <div class="tool-section">
       <div class="dev-label">Situation</div>
@@ -395,9 +356,21 @@
       <textarea id="workAdvice" hidden readonly></textarea>
     </div>
 
-    <div class="tool-section" style="flex:1; display:flex; flex-direction:column; gap:3px;">
+  </div>
+
+  <!-- ── DROITE : terrain + consignes ── -->
+  <div class="right-col">
+
+    <div class="panel terrain-panel">
+      <div id="situationNav" class="situation-nav"></div>
+      <div class="terrain-shell">
+        <svg id="courtSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" aria-label="Terrain de badminton interactif"></svg>
+      </div>
+    </div>
+
+    <div class="panel consignes-strip">
       <div class="dev-label">Consignes &amp; dispositif</div>
-      <textarea id="deviceText" placeholder="Rôles, réussite attendue, répétitions…" style="flex:1; min-height:60px;"></textarea>
+      <textarea id="deviceText" placeholder="Décris le rôle de chacun, la réussite attendue, le critère d'efficacité, les répétitions…"></textarea>
     </div>
 
   </div>
