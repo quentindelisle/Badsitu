@@ -43,7 +43,7 @@
       flex-direction: column;
       height: 100dvh;
       padding: 5px;
-      gap: 5px;
+      gap: 3px;
     }
 
     /* ── HEADER ── */
@@ -132,46 +132,35 @@
       background:var(--blue2); color:#fff; border-color:var(--blue2);
     }
 
-    /* ══ LAYOUT PAYSAGE
-       body (flex col) :
-         .header          ← fixe
-         .main-area       ← flex:1, grille 2 cols
-           .tools-panel   ← 214px, toute la hauteur
-           .right-col     ← 1fr, flex col
-             .terrain-panel  ← flex:1 (prend tout)
-             .consignes-strip ← fixe ~62px
+    /* ══ LAYOUT
+       body(flex col): header | main-area(flex:1) | consignes-strip
+       main-area(grid 2 col): tools-panel(auto) | terrain-panel(stretch)
     ══ */
     .main-area {
       flex:1; min-height:0;
       display:grid;
       grid-template-columns: 214px 1fr;
       gap:5px;
+      align-items:start;
     }
-
     .panel {
-      background:var(--surface);
-      border-radius:var(--r);
+      background:var(--surface); border-radius:var(--r);
       border:1px solid rgba(10,32,69,.07);
-      box-shadow:0 2px 10px rgba(10,32,69,.08);
-      overflow:hidden;
+      box-shadow:0 2px 10px rgba(10,32,69,.08); overflow:hidden;
     }
 
-    /* ── COL GAUCHE : outils + situation/forme/rappels ── */
+    /* ── GAUCHE : hauteur naturelle du contenu ── */
     .tools-panel {
-      display:flex; flex-direction:column;
-      padding:7px; gap:5px; overflow-y:auto; min-height:0;
+      display:flex; flex-direction:column; padding:7px; gap:5px;
     }
-    .tools-panel::-webkit-scrollbar { width:3px; }
-    .tools-panel::-webkit-scrollbar-thumb { background:rgba(10,32,69,.15); border-radius:3px; }
-
-    .tool-section { display:flex; flex-direction:column; gap:3px; flex-shrink:0; }
+    .tool-section { display:flex; flex-direction:column; gap:3px; }
     .tool-label, .dev-label {
       font-family:var(--ff-h); font-size:0.59rem; font-weight:800;
       letter-spacing:.09em; text-transform:uppercase; color:var(--blue);
       padding-bottom:2px; border-bottom:1px solid rgba(18,84,204,.12);
     }
     .btn-row { display:flex; flex-wrap:wrap; gap:3px; }
-    .divider { height:1px; background:rgba(10,32,69,.09); flex-shrink:0; }
+    .divider { height:1px; background:rgba(10,32,69,.09); }
 
     .player-chip {
       color:#fff; border:2px solid transparent; padding:3px 8px;
@@ -186,8 +175,8 @@
       color:#111; border:none; border-radius:6px;
       padding:3px 7px; font-size:0.72rem; box-shadow:0 2px 6px rgba(0,0,0,.14);
     }
-    .shot-btn.active   { outline:2px solid rgba(255,255,255,.85); box-shadow:0 0 0 3px rgba(18,84,204,.30); }
-    .shot-btn.last-used{ outline:2px solid rgba(255,255,255,.90); box-shadow:0 0 0 3px rgba(18,84,204,.24); }
+    .shot-btn.active    { outline:2px solid rgba(255,255,255,.85); box-shadow:0 0 0 3px rgba(18,84,204,.30); }
+    .shot-btn.last-used { outline:2px solid rgba(255,255,255,.90); box-shadow:0 0 0 3px rgba(18,84,204,.24); }
     .work-btn {
       background:var(--sky); color:var(--blue);
       border:1px solid rgba(18,84,204,.18); padding:3px 8px; border-radius:6px; font-size:0.72rem;
@@ -204,17 +193,12 @@
     }
     .hero-play-btn.active { background:linear-gradient(135deg,var(--green),#23b267); }
 
-    /* ── COL DROITE : flex col → terrain + consignes ── */
-    .right-col {
-      display:flex; flex-direction:column; gap:5px; min-height:0;
-    }
-
-    /* Terrain : prend tout l'espace vertical restant */
+    /* ── DROITE : terrain s'étire sur toute la hauteur de main-area ── */
     .terrain-panel {
-      flex:1; min-height:0;
-      display:flex; flex-direction:column; padding:5px; gap:4px;
+      align-self:stretch;
+      display:flex; flex-direction:column; padding:2px; gap:0;
     }
-    .situation-nav { display:flex; flex-wrap:wrap; gap:3px; flex-shrink:0; }
+    .situation-nav { display:flex; flex-wrap:wrap; gap:3px; flex-shrink:0; margin-bottom:2px; }
     .situation-nav-btn {
       background:var(--sky); color:var(--blue); border-radius:6px;
       padding:2px 9px; font-family:var(--ff-h); font-size:0.70rem;
@@ -231,22 +215,20 @@
       width:100%; height:100%; display:block; touch-action:manipulation;
     }
 
-    /* Barre consignes : hauteur fixe, pleine largeur de la col droite */
+    /* ── CONSIGNES : pleine largeur, écart réduit avec terrain ── */
     .consignes-strip {
-      flex-shrink:0;
-      display:flex; align-items:flex-start; gap:8px;
-      padding:5px 8px;
+      flex-shrink:0; display:flex; flex-direction:column; gap:3px;
+      padding:4px 8px;
     }
-    .consignes-strip .dev-label { border-bottom:none; padding-bottom:0; white-space:nowrap; margin-top:3px; }
-    .consignes-strip textarea { flex:1; height:50px; }
+    .consignes-strip .dev-label { border-bottom:1px solid rgba(18,84,204,.12); padding-bottom:2px; }
+    .consignes-strip textarea { width:100%; height:48px; }
 
-    /* ── INPUTS & TEXTAREA globaux ── */
+    /* ── INPUTS globaux ── */
     input[type="text"], textarea, select {
       font:500 0.78rem var(--ff-b);
       border:1px solid rgba(10,32,69,.14); border-radius:6px;
       padding:4px 8px; background:var(--sf2); color:var(--ink);
-      outline:none; width:100%;
-      transition:border-color .15s, box-shadow .15s;
+      outline:none; width:100%; transition:border-color .15s, box-shadow .15s;
     }
     input[type="text"] { height:26px; }
     input[type="text"]:focus, textarea:focus {
@@ -258,23 +240,14 @@
       letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);
       display:block; margin-bottom:2px;
     }
-    .advice-box {
-      background:linear-gradient(135deg,#f0f5ff,#e8f0fe);
-      border:1px solid rgba(18,84,204,.15); border-radius:6px;
-      padding:4px 7px; color:var(--ink2); font-size:0.70rem;
-      line-height:1.4; max-height:50px; overflow-y:auto;
-    }
-
     .footer-note { display:none; }
 
-    /* ── PORTRAIT fallback ── */
+    /* ── PORTRAIT ── */
     @media (orientation: portrait) {
       html, body { height:auto; overflow:auto; }
       body { padding:8px; gap:8px; }
-      .main-area { grid-template-columns:1fr; height:auto; flex:none; }
-      .right-col { min-height:0; }
-      .terrain-panel { height:55vw; min-height:180px; flex:none; }
-      .terrain-shell { position:relative; }
+      .main-area { grid-template-columns:1fr; align-items:stretch; height:auto; flex:none; }
+      .terrain-panel { height:55vw; min-height:180px; }
       .consignes-strip textarea { height:80px; }
     }
   </style>
@@ -312,7 +285,7 @@
 
 <div class="main-area">
 
-  <!-- ── GAUCHE : outils + situation + forme + rappels ── -->
+  <!-- ── GAUCHE : outils + forme de travail ── -->
   <div class="panel tools-panel">
 
     <div class="tool-section">
@@ -341,41 +314,32 @@
     <div class="divider"></div>
 
     <div class="tool-section">
-      <div class="dev-label">Situation</div>
-      <input id="situationTitle" type="text" placeholder="Ex. Routine amorti / dégagé" />
-    </div>
-
-    <div class="tool-section">
-      <div class="dev-label">Forme de travail</div>
+      <div class="dev-label">4 · Forme de Travail</div>
       <div class="btn-row" id="workButtons"></div>
     </div>
 
-    <div class="tool-section">
-      <div class="dev-label">Rappels</div>
-      <div id="workAdviceDisplay" class="advice-box"></div>
-      <textarea id="workAdvice" hidden readonly></textarea>
-    </div>
-
   </div>
 
-  <!-- ── DROITE : terrain + consignes ── -->
-  <div class="right-col">
-
-    <div class="panel terrain-panel">
-      <div id="situationNav" class="situation-nav"></div>
-      <div class="terrain-shell">
-        <svg id="courtSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" aria-label="Terrain de badminton interactif"></svg>
-      </div>
+  <!-- ── DROITE : terrain seul ── -->
+  <div class="panel terrain-panel">
+    <div id="situationNav" class="situation-nav"></div>
+    <div class="terrain-shell">
+      <svg id="courtSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" aria-label="Terrain de badminton interactif"></svg>
     </div>
-
-    <div class="panel consignes-strip">
-      <div class="dev-label">Consignes &amp; dispositif</div>
-      <textarea id="deviceText" placeholder="Décris le rôle de chacun, la réussite attendue, le critère d'efficacité, les répétitions…"></textarea>
-    </div>
-
   </div>
 
 </div>
+
+<!-- ── CONSIGNES : pleine largeur sous les 2 colonnes ── -->
+<div class="panel consignes-strip">
+  <div class="dev-label">5 · Consignes et Dispositif</div>
+  <textarea id="deviceText" placeholder="Décris le rôle de chacun, la réussite attendue, le critère d'efficacité, les répétitions…"></textarea>
+</div>
+
+<!-- IDs fantômes pour compatibilité JS -->
+<input id="situationTitle" type="text" hidden />
+<div id="workAdviceDisplay" hidden></div>
+<textarea id="workAdvice" hidden readonly></textarea>
 
 <script>
 (() => {
@@ -425,10 +389,11 @@
   };
 
   const zoneTypes = {
-    autorisee: { label:'Zone autorisée', fill:'rgba(46,125,50,0.28)',  stroke:'#2e7d32', text:'OK',    textColor:'#1b5e20', icon:'✓' },
-    interdite: { label:'Zone interdite', fill:'rgba(244,67,54,0.24)',  stroke:'#c62828', text:'⛔',    textColor:'#b71c1c', icon:'⛔' },
-    bonus:     { label:'Bonus',          fill:'rgba(201,151,0,0.26)',  stroke:'#c99700', text:'BONUS', textColor:'#b8860b', icon:'★' },
-    malus:     { label:'Malus',          fill:'rgba(255,82,82,0.20)',  stroke:'#d32f2f', text:'MALUS', textColor:'#c62828', icon:'−' }
+    autorisee: { label:'Autorisée',  fill:'rgba(46,125,50,0.28)',   stroke:'#2e7d32', text:'OK',    textColor:'#1b5e20', icon:'✓' },
+    interdite: { label:'Interdite',  fill:'rgba(244,67,54,0.24)',   stroke:'#c62828', text:'⛔',    textColor:'#b71c1c', icon:'⛔' },
+    bonus:     { label:'Bonus',      fill:'rgba(201,151,0,0.26)',   stroke:'#c99700', text:'BONUS', textColor:'#b8860b', icon:'★' },
+    malus:     { label:'Malus',      fill:'rgba(255,82,82,0.20)',   stroke:'#d32f2f', text:'MALUS', textColor:'#c62828', icon:'−' },
+    plot:      { label:'Plot',       fill:'rgba(255,140,0,0.30)',   stroke:'#e65c00', text:'●',     textColor:'#bf4600', icon:'🔶' }
   };
 
   const geometry = {
@@ -681,7 +646,9 @@
       const b = document.createElement('button');
       b.className = 'zone-btn' + (state.ui.activeZoneType === key ? ' active' : '');
       b.textContent = `${zoneType.icon} ${zoneType.label}`;
-      b.style.background = zoneType.fill.replace('0.28','0.65').replace('0.24','0.58').replace('0.26','0.60').replace('0.20','0.50');
+      const bgMap = { autorisee:'rgba(46,125,50,0.75)', interdite:'rgba(200,40,40,0.70)',
+                      bonus:'rgba(180,130,0,0.72)', malus:'rgba(210,50,50,0.62)', plot:'rgba(230,92,0,0.80)' };
+      b.style.background = bgMap[key] || zoneType.stroke;
       b.style.border = `2px solid ${zoneType.stroke}`;
       b.style.color = key === 'bonus' ? '#10243c' : '#fff';
       b.onpointerdown = (e) => { e.preventDefault(); state.ui.activeZoneType = key; state.ui.activeMode = 'zone'; stopPlayback(false); renderAll(); };
@@ -738,6 +705,27 @@
       const z = zoneById[ann.zoneId];
       const t = zoneTypes[ann.type];
       if (!z || !t) return;
+
+      if (ann.type === 'plot') {
+        // Plot = petit cône orange au centre de la zone, par-dessus tout
+        const r = Math.min(z.w, z.h) * 0.16;  // réduit (était 0.28)
+        const sel = state.ui.selectedAnnotation === annIndex;
+        const base = createSvgEl('ellipse', {
+          cx: z.cx, cy: z.cy + r * 0.55, rx: r * 0.85, ry: r * 0.22,
+          fill: '#c84800', 'pointer-events': 'none'
+        });
+        const cone = createSvgEl('polygon', {
+          points: `${z.cx},${z.cy - r * 1.3} ${z.cx - r * 0.85},${z.cy + r * 0.55} ${z.cx + r * 0.85},${z.cy + r * 0.55}`,
+          fill: '#ff8c00', stroke: sel ? '#fff' : '#c84800',
+          'stroke-width': sel ? 2.5 : 1,
+          'pointer-events': 'all', cursor: 'pointer'
+        });
+        cone.addEventListener('click', (e) => { e.stopPropagation(); state.ui.selectedAnnotation = annIndex; renderAll(); });
+        g.appendChild(base);
+        g.appendChild(cone);
+        return;
+      }
+
       const rect = createSvgEl('rect', {
         x:z.x+3, y:z.y+3, width:Math.max(0,z.w-6), height:Math.max(0,z.h-6), rx:6,
         fill:t.fill, stroke:t.stroke, 'stroke-width': state.ui.selectedAnnotation === annIndex ? 4 : 2
@@ -1182,14 +1170,30 @@
     }
     if (state.ui.activeMode === 'zone') {
       stopPlayback(false);
-      const existingIndex = s.zoneAnnotations.findIndex(a => a.zoneId === zoneId);
-      if (existingIndex >= 0 && s.zoneAnnotations[existingIndex].type === state.ui.activeZoneType) {
-        s.zoneAnnotations.splice(existingIndex, 1);
-        state.ui.selectedAnnotation = null;
+      const activeType = state.ui.activeZoneType;
+
+      if (activeType === 'plot') {
+        // Les plots sont indépendants : on peut en ajouter plusieurs par zone
+        // Un clic sur une zone avec plot actif : ajoute un plot (ou le retire si déjà un plot sur cette zone exacte)
+        const plotIdx = s.zoneAnnotations.findIndex(a => a.zoneId === zoneId && a.type === 'plot');
+        if (plotIdx >= 0) {
+          s.zoneAnnotations.splice(plotIdx, 1);
+          state.ui.selectedAnnotation = null;
+        } else {
+          s.zoneAnnotations.push({ zoneId, type: 'plot' });
+          state.ui.selectedAnnotation = s.zoneAnnotations.length - 1;
+        }
       } else {
-        if (existingIndex >= 0) s.zoneAnnotations.splice(existingIndex, 1);
-        s.zoneAnnotations.push({ zoneId, type:state.ui.activeZoneType });
-        state.ui.selectedAnnotation = s.zoneAnnotations.length - 1;
+        // Zones colorées : une seule par case (hors plots), les plots sont conservés
+        const zoneIdx = s.zoneAnnotations.findIndex(a => a.zoneId === zoneId && a.type !== 'plot');
+        if (zoneIdx >= 0 && s.zoneAnnotations[zoneIdx].type === activeType) {
+          s.zoneAnnotations.splice(zoneIdx, 1);
+          state.ui.selectedAnnotation = null;
+        } else {
+          if (zoneIdx >= 0) s.zoneAnnotations.splice(zoneIdx, 1);
+          s.zoneAnnotations.push({ zoneId, type: activeType });
+          state.ui.selectedAnnotation = s.zoneAnnotations.length - 1;
+        }
       }
       saveState(); renderAll();
     }
