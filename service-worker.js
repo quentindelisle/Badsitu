@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eps-badminton-v24';
+const CACHE_NAME = 'eps-badminton-v25';
 const ASSETS = [
   './',
   './index.html',
